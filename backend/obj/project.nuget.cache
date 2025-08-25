@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2EasvNgzUD0=",
+  "dgSpecHash": "1dLL7oPe7zI=",
   "success": true,
-  "projectFilePath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\MemberManagementAPI.csproj",
+  "projectFilePath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\MemberManagementAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\citi_\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\citi_\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

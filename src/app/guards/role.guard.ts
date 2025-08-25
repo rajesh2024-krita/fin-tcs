@@ -7,15 +7,19 @@ import { AuthService, UserRole } from '../services/auth.service';
   providedIn: 'root'
 })
 export class RoleGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const currentUser = this.authService.getCurrentUser();
     const requiredRoles = route.data['roles'] as UserRole[];
 
-    if (currentUser && requiredRoles.includes(currentUser.role)) {
+    if (
+      currentUser &&
+      requiredRoles.includes(currentUser.role as UserRole)
+    ) {
       return true;
     }
+
 
     this.router.navigate(['/unauthorized']);
     return false;

@@ -567,7 +567,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   getRoleDisplayName(role: UserRole): string {
-    const roleNames: { [key in UserRole]: string } = {
+    const roleNames: Partial<Record<UserRole, string>> = {
       [UserRole.SUPER_ADMIN]: 'Super Admin',
       [UserRole.SOCIETY_ADMIN]: 'Society Admin',
       [UserRole.BRANCH_ADMIN]: 'Branch Admin',
@@ -579,7 +579,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   getRoleBadgeClass(role: UserRole): string {
-    const classes: { [key in UserRole]: string } = {
+    const classes: Partial<Record<UserRole, string>> = {
       [UserRole.SUPER_ADMIN]: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
       [UserRole.SOCIETY_ADMIN]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
       [UserRole.BRANCH_ADMIN]: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',

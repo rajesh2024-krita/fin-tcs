@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\MemberManagementAPI.csproj": {}
+    "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\MemberManagementAPI.csproj": {}
   },
   "projects": {
-    "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\MemberManagementAPI.csproj": {
+    "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\MemberManagementAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\MemberManagementAPI.csproj",
+        "projectUniqueName": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\MemberManagementAPI.csproj",
         "projectName": "MemberManagementAPI",
-        "projectPath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\MemberManagementAPI.csproj",
+        "projectPath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\MemberManagementAPI.csproj",
         "packagesPath": "C:\\Users\\citi_\\.nuget\\packages\\",
-        "outputPath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fin\\backend\\obj\\",
+        "outputPath": "C:\\Rajesh\\Angular\\ZestySmartProcedures\\fintcs\\fintcs\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\citi_\\AppData\\Roaming\\NuGet\\NuGet.Config"
