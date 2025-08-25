@@ -1,4 +1,3 @@
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,38 +22,38 @@ namespace MemberManagementAPI.Models
 
         public DateTime? DateOfBirth { get; set; }
 
-        [StringLength(20)]
+        [StringLength(10)]
         public string? Mobile { get; set; }
 
         [StringLength(100)]
         [EmailAddress]
         public string? Email { get; set; }
 
-        [StringLength(50)]
+        [StringLength(100)]
         public string? Designation { get; set; }
 
-        public DateTime? DojJob { get; set; }
+        public DateTime? DOJJob { get; set; }
 
-        public DateTime? DoRetirement { get; set; }
+        public DateTime? DORetirement { get; set; }
 
-        [StringLength(50)]
+        [StringLength(100)]
         public string? Branch { get; set; }
 
-        public DateTime? DojSociety { get; set; }
+        public DateTime? DOJSociety { get; set; }
 
-        [StringLength(200)]
+        [StringLength(500)]
         public string? OfficeAddress { get; set; }
 
-        [StringLength(200)]
+        [StringLength(500)]
         public string? ResidenceAddress { get; set; }
 
-        [StringLength(50)]
+        [StringLength(100)]
         public string? City { get; set; }
 
-        [StringLength(20)]
+        [StringLength(15)]
         public string? PhoneOffice { get; set; }
 
-        [StringLength(20)]
+        [StringLength(15)]
         public string? PhoneResidence { get; set; }
 
         [StringLength(100)]
@@ -67,7 +66,7 @@ namespace MemberManagementAPI.Models
         public decimal ShareAmount { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal CdAmount { get; set; }
+        public decimal CDAmount { get; set; }
 
         [StringLength(100)]
         public string? BankName { get; set; }
