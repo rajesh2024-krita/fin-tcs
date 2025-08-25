@@ -272,3 +272,4 @@ C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\obj\Debug\net8.0\re
 C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\obj\Debug\net8.0\MemberManagementAPI.pdb
 C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\obj\Debug\net8.0\MemberManagementAPI.genruntimeconfig.cache
 C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\obj\Debug\net8.0\ref\MemberManagementAPI.dll
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
