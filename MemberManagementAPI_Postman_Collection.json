@@ -4,16 +4,7 @@
     "description": "Complete API collection for Member Management System",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{jwt_token}}",
-        "type": "string"
-      }
-    ]
-  },
+  
   "variable": [
     {
       "key": "base_url",
@@ -123,7 +114,12 @@
           "name": "Get All Members",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{base_url}}/members",
               "host": ["{{base_url}}"],

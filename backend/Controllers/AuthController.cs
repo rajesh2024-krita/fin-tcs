@@ -23,17 +23,20 @@ namespace MemberManagementAPI.Controllers
         {
             try
             {
+                _logger.LogInformation($"Login attempt for user: {loginDto.Username}");
                 var result = await _authService.LoginAsync(loginDto);
+                _logger.LogInformation($"Login successful for user: {loginDto.Username}");
                 return Ok(result);
             }
             catch (UnauthorizedAccessException ex)
             {
+                _logger.LogWarning($"Login failed for user {loginDto.Username}: {ex.Message}");
                 return Unauthorized(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during login");
-                return StatusCode(500, new { message = "An error occurred during login" });
+                _logger.LogError(ex, $"Error during login for user: {loginDto.Username}");
+                return StatusCode(500, new { message = "An error occurred during login", details = ex.Message });
             }
         }
 

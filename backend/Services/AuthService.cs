@@ -19,22 +19,29 @@ namespace MemberManagementAPI.Services
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
         {
-            var user = await _context.Users
-                .Include(u => u.Society)
-                .FirstOrDefaultAsync(u => u.Username == loginDto.Username && u.IsActive);
-
-            if (user == null || user.PasswordHash != loginDto.Password)
+            try
             {
-                throw new UnauthorizedAccessException("Invalid username or password");
+                var user = await _context.Users
+                    .Include(u => u.Society)
+                    .FirstOrDefaultAsync(u => u.Username.ToLower() == loginDto.Username.ToLower() && u.IsActive);
+
+                if (user == null || user.PasswordHash != loginDto.Password)
+                {
+                    throw new UnauthorizedAccessException("Invalid username or password");
+                }
+
+                var userDto = MapToUserDto(user);
+
+                return new AuthResponseDto
+                {
+                    Token = "simple-auth-token",
+                    User = userDto
+                };
             }
-
-            var userDto = MapToUserDto(user);
-
-            return new AuthResponseDto
+            catch (Exception ex)
             {
-                Token = "simple-auth-token",
-                User = userDto
-            };
+                throw new Exception($"Login error: {ex.Message}", ex);
+            }
         }
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto, int currentUserId)
