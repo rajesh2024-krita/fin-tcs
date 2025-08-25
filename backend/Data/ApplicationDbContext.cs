@@ -98,64 +98,49 @@ namespace MemberManagementAPI.Data
                 }
             );
 
-            // Create test users with hashed passwords
+            // Create test users with plain passwords
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
                     Username = "superadmin",
-                    PasswordHash = HashPassword("password"),
+                    PasswordHash = "password", // Plain text password
                     Role = "SuperAdmin",
-                    IsActive = true,
-                    CreatedDate = DateTime.Now
+                    SocietyId = 1,
+                    CreatedDate = DateTime.Now,
+                    IsActive = true
                 },
                 new User
                 {
                     Id = 2,
                     Username = "societyadmin",
-                    PasswordHash = HashPassword("password"),
+                    PasswordHash = "password", // Plain text password
                     Role = "SocietyAdmin",
                     SocietyId = 1,
-                    IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    IsActive = true
                 },
                 new User
                 {
                     Id = 3,
                     Username = "accountant1",
-                    PasswordHash = HashPassword("password"),
+                    PasswordHash = "password", // Plain text password
                     Role = "Accountant",
                     SocietyId = 1,
-                    IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    IsActive = true
                 },
                 new User
                 {
                     Id = 4,
                     Username = "member1",
-                    PasswordHash = HashPassword("password"),
+                    PasswordHash = "password", // Plain text password
                     Role = "Member",
                     SocietyId = 1,
-                    IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    IsActive = true
                 }
             );
-        }
-
-        private string HashPassword(string password)
-        {
-            using var rng = RandomNumberGenerator.Create();
-            var salt = new byte[16];
-            rng.GetBytes(salt);
-
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            var hash = pbkdf2.GetBytes(32);
-
-            var hashBytes = new byte[48];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 32);
-
-            return Convert.ToBase64String(hashBytes);
         }
     }
 }

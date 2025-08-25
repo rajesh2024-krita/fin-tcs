@@ -1,7 +1,5 @@
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using MemberManagementAPI.Models.DTOs;
 using MemberManagementAPI.Services;
 
@@ -40,13 +38,11 @@ namespace MemberManagementAPI.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize(Roles = "SuperAdmin,SocietyAdmin")]
         public async Task<ActionResult<UserDto>> Register([FromBody] CreateUserDto createUserDto)
         {
             try
             {
-                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-                var user = await _authService.CreateUserAsync(createUserDto, currentUserId);
+                var user = await _authService.CreateUserAsync(createUserDto, 1); // Default to admin user
                 return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
             }
             catch (UnauthorizedAccessException ex)
@@ -65,7 +61,6 @@ namespace MemberManagementAPI.Controllers
         }
 
         [HttpGet("user/{id}")]
-        [Authorize]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             try
@@ -76,14 +71,7 @@ namespace MemberManagementAPI.Controllers
                     return NotFound();
                 }
 
-                // Users can only view their own profile unless they're SuperAdmin
-                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
-
-                if (currentUserId != id && currentUserRole != "SuperAdmin")
-                {
-                    return Forbid();
-                }
+                // Simple access - no role checking
 
                 return Ok(user);
             }
@@ -95,13 +83,11 @@ namespace MemberManagementAPI.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             try
             {
-                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-                var user = await _authService.GetUserByIdAsync(currentUserId);
+                var user = await _authService.GetUserByIdAsync(1); // Default to first user
                 
                 if (user == null)
                 {

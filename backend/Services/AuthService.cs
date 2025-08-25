@@ -1,10 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using MemberManagementAPI.Data;
 using MemberManagementAPI.Models;
 using MemberManagementAPI.Models.DTOs;
@@ -28,17 +23,16 @@ namespace MemberManagementAPI.Services
                 .Include(u => u.Society)
                 .FirstOrDefaultAsync(u => u.Username == loginDto.Username && u.IsActive);
 
-            if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
+            if (user == null || user.PasswordHash != loginDto.Password)
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
             var userDto = MapToUserDto(user);
-            var token = await GenerateJwtTokenAsync(userDto);
 
             return new AuthResponseDto
             {
-                Token = token,
+                Token = "simple-auth-token",
                 User = userDto
             };
         }
@@ -73,7 +67,7 @@ namespace MemberManagementAPI.Services
             var user = new User
             {
                 Username = createUserDto.Username,
-                PasswordHash = HashPassword(createUserDto.Password),
+                PasswordHash = createUserDto.Password,
                 Role = createUserDto.Role,
                 SocietyId = createUserDto.SocietyId
             };
@@ -86,32 +80,7 @@ namespace MemberManagementAPI.Services
 
         public Task<string> GenerateJwtTokenAsync(UserDto user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "your-secret-key-that-is-long-enough-for-security");
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            if (user.SocietyId.HasValue)
-            {
-                claims.Add(new Claim("SocietyId", user.SocietyId.Value.ToString()));
-            }
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"],
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Task.FromResult(tokenHandler.WriteToken(token));
+            return Task.FromResult("simple-auth-token");
         }
 
         public async Task<bool> ValidateUserRoleAsync(int userId, string requiredRole)
@@ -129,39 +98,7 @@ namespace MemberManagementAPI.Services
             return user != null ? MapToUserDto(user) : null;
         }
 
-        private string HashPassword(string password)
-        {
-            using var rng = RandomNumberGenerator.Create();
-            var salt = new byte[16];
-            rng.GetBytes(salt);
-
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            var hash = pbkdf2.GetBytes(32);
-
-            var hashBytes = new byte[48];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 32);
-
-            return Convert.ToBase64String(hashBytes);
-        }
-
-        private bool VerifyPassword(string password, string storedHash)
-        {
-            var hashBytes = Convert.FromBase64String(storedHash);
-            var salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            var hash = pbkdf2.GetBytes(32);
-
-            for (int i = 0; i < 32; i++)
-            {
-                if (hashBytes[i + 16] != hash[i])
-                    return false;
-            }
-
-            return true;
-        }
+        
 
         private UserDto MapToUserDto(User user)
         {
