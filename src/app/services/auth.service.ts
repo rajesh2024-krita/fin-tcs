@@ -1,176 +1,125 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { catchError, map } from 'rxjs/operators';
 
 export interface User {
   id: number;
   username: string;
-  email: string;
-  role: UserRole;
+  role: string;
   societyId?: number;
   societyName?: string;
-  firstName: string;
-  lastName: string;
   isActive: boolean;
-  createdBy?: number;
   createdDate: Date;
-  lastLogin?: Date;
 }
 
 export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
-  SOCIETY_ADMIN = 'society_admin',
-  BRANCH_ADMIN = 'branch_admin',
-  ACCOUNTANT = 'accountant',
-  OPERATOR = 'operator',
-  MEMBER = 'member'
+  SUPER_ADMIN = 'SuperAdmin',
+  SOCIETY_ADMIN = 'SocietyAdmin',
+  USER = 'User'
 }
 
-export interface Permission {
-  module: string;
-  actions: string[]; // create, read, update, delete, approve
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+export interface CreateUserRequest {
+  username: string;
+  password: string;
+  role: string;
+  societyId?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://0.0.0.0:5000/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
 
   public currentUser$ = this.currentUserSubject.asObservable();
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  private users: User[] = [
-    {
-      id: 1,
-      username: 'superadmin',
-      email: 'superadmin@system.com',
-      role: UserRole.SUPER_ADMIN,
-      firstName: 'Super',
-      lastName: 'Admin',
-      isActive: true,
-      createdDate: new Date('2024-01-01')
-    },
-    {
-      id: 2,
-      username: 'societyadmin',
-      email: 'admin@society1.com',
-      role: UserRole.SOCIETY_ADMIN,
-      societyId: 1,
-      societyName: 'ABC Society',
-      firstName: 'Society',
-      lastName: 'Admin',
-      isActive: true,
-      createdBy: 1,
-      createdDate: new Date('2024-01-15')
-    },
-    {
-      id: 3,
-      username: 'accountant1',
-      email: 'accountant1@society1.com',
-      role: UserRole.ACCOUNTANT,
-      societyId: 1,
-      societyName: 'ABC Society',
-      firstName: 'John',
-      lastName: 'Accountant',
-      isActive: true,
-      createdBy: 2,
-      createdDate: new Date('2024-02-01')
-    },
-    {
-      id: 4,
-      username: 'member1',
-      email: 'member1@society1.com',
-      role: UserRole.MEMBER,
-      societyId: 1,
-      societyName: 'ABC Society',
-      firstName: 'Jane',
-      lastName: 'Member',
-      isActive: true,
-      createdBy: 2,
-      createdDate: new Date('2024-02-15')
-    }
-  ];
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  };
 
-  private rolePermissions: Map<UserRole, Permission[]> = new Map([
-    [UserRole.SUPER_ADMIN, [
-      { module: 'all', actions: ['create', 'read', 'update', 'delete', 'approve'] }
-    ]],
-    [UserRole.SOCIETY_ADMIN, [
-      { module: 'members', actions: ['create', 'read', 'update', 'delete'] },
-      { module: 'accounts', actions: ['create', 'read', 'update', 'delete'] },
-      { module: 'transactions', actions: ['create', 'read', 'update', 'approve'] },
-      { module: 'reports', actions: ['read'] },
-      { module: 'master', actions: ['create', 'read', 'update'] },
-      { module: 'accountants', actions: ['create', 'read', 'update', 'delete'] }
-    ]],
-    [UserRole.ACCOUNTANT, [
-      { module: 'accounts', actions: ['create', 'read', 'update'] },
-      { module: 'transactions', actions: ['create', 'read', 'update'] },
-      { module: 'reports', actions: ['read'] },
-      { module: 'members', actions: ['read'] }
-    ]],
-    [UserRole.MEMBER, [
-      { module: 'own-account', actions: ['read'] },
-      { module: 'own-transactions', actions: ['read'] }
-    ]]
-  ]);
-
-  constructor(private router: Router) {
+  constructor(private http: HttpClient, private router: Router) {
     this.loadUserFromStorage();
   }
 
   login(username: string, password: string): Observable<boolean> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        const user = this.users.find(u => u.username === username && u.isActive);
-        if (user && password === 'password') {
-          user.lastLogin = new Date();
-          this.currentUserSubject.next(user);
-          this.isLoggedInSubject.next(true);
+    const loginRequest: LoginRequest = { username, password };
 
-          if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-            localStorage.setItem('currentUser', JSON.stringify(user));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, loginRequest, this.httpOptions)
+      .pipe(
+        map(response => {
+          if (response && response.token && response.user) {
+            this.currentUserSubject.next(response.user);
+            this.isLoggedInSubject.next(true);
+
+            if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+              localStorage.setItem('currentUser', JSON.stringify(response.user));
+              localStorage.setItem('token', response.token);
+            }
+            return true;
           }
-
-          observer.next(true);
-        } else {
-          observer.next(false);
-        }
-        observer.complete();
-      }, 1000);
-    });
+          return false;
+        }),
+        catchError(error => {
+          console.error('Login error:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   logout(): void {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
     }
     this.currentUserSubject.next(null);
     this.isLoggedInSubject.next(false);
     this.router.navigate(['/login']);
   }
 
-
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 
   hasPermission(module: string, action: string): boolean {
     const user = this.getCurrentUser();
     if (!user) return false;
 
-    const permissions = this.rolePermissions.get(user.role);
-    if (!permissions) return false;
-
     // Super admin has all permissions
     if (user.role === UserRole.SUPER_ADMIN) return true;
 
-    return permissions.some(permission =>
-      (permission.module === module || permission.module === 'all') &&
-      permission.actions.includes(action)
-    );
+    // Add your permission logic here based on roles
+    switch (user.role) {
+      case UserRole.SOCIETY_ADMIN:
+        return ['members', 'accounts', 'transactions', 'reports', 'master'].includes(module);
+      case UserRole.USER:
+        return ['members', 'accounts'].includes(module) && action === 'read';
+      default:
+        return false;
+    }
   }
 
   canAccessRoute(route: string): boolean {
@@ -179,83 +128,57 @@ export class AuthService {
 
     if (user.role === UserRole.SUPER_ADMIN) return true;
 
+    // Add route-specific permissions
     const routePermissions: { [key: string]: { module: string, action: string } } = {
       '/master/member-details': { module: 'members', action: 'read' },
       '/transaction/deposit-receipt': { module: 'transactions', action: 'read' },
       '/accounts/cash-book': { module: 'accounts', action: 'read' },
       '/file/security/authority': { module: 'all', action: 'read' },
-      '/file/security/new-user': { module: 'all', action: 'create' },
-      // Add more route mappings as needed
+      '/file/security/new-user': { module: 'all', action: 'create' }
     };
 
     const permission = routePermissions[route];
-    if (!permission) return true; // Allow access to unmapped routes
+    if (!permission) return true;
 
     return this.hasPermission(permission.module, permission.action);
   }
 
-  createUser(userData: Partial<User>): Observable<User> {
-    return new Observable(observer => {
-      const currentUser = this.getCurrentUser();
-      if (!currentUser) {
-        observer.error('Not authenticated');
-        return;
-      }
+  createUser(userData: CreateUserRequest): Observable<User> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<User>(`${this.apiUrl}/register`, userData, { headers })
+      .pipe(
+        catchError(error => {
+          console.error('Create user error:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 
-      const newUser: User = {
-        id: Math.max(...this.users.map(u => u.id)) + 1,
-        username: userData.username!,
-        email: userData.email!,
-        role: userData.role!,
-        firstName: userData.firstName!,
-        lastName: userData.lastName!,
-        societyId: userData.societyId || currentUser.societyId,
-        societyName: userData.societyName || currentUser.societyName,
-        isActive: true,
-        createdBy: currentUser.id,
-        createdDate: new Date()
-      };
+  getCurrentUserProfile(): Observable<User> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<User>(`${this.apiUrl}/me`, { headers })
+      .pipe(
+        catchError(error => {
+          console.error('Get current user error:', error);
+          return throwError(() => error);
+        })
+      );
+  }
 
-      this.users.push(newUser);
-      observer.next(newUser);
-      observer.complete();
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     });
-  }
-
-  getUsers(): Observable<User[]> {
-    const currentUser = this.getCurrentUser();
-    if (!currentUser) return new Observable(obs => obs.next([]));
-
-    let filteredUsers = this.users;
-
-    if (currentUser.role === UserRole.SOCIETY_ADMIN) {
-      filteredUsers = this.users.filter(u => u.societyId === currentUser.societyId);
-    }
-
-    return new Observable(observer => {
-      observer.next(filteredUsers);
-      observer.complete();
-    });
-  }
-
-  updateUser(user: User): void {
-    const index = this.users.findIndex(u => u.id === user.id);
-    if (index !== -1) {
-      this.users[index] = user;
-    }
-  }
-
-  deleteUser(userId: number): void {
-    const index = this.users.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      this.users[index].isActive = false;
-    }
   }
 
   private loadUserFromStorage(): void {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       const userData = localStorage.getItem('currentUser');
-      if (userData) {
+      const token = localStorage.getItem('token');
+
+      if (userData && token) {
         const user = JSON.parse(userData);
         this.currentUserSubject.next(user);
         this.isLoggedInSubject.next(true);
@@ -263,12 +186,11 @@ export class AuthService {
     }
   }
 
-
-  getUserRoles(): UserRole[] {
+  getUserRoles(): string[] {
     return Object.values(UserRole);
   }
 
-  canCreateRole(targetRole: UserRole): boolean {
+  canCreateRole(targetRole: string): boolean {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return false;
 
@@ -276,7 +198,7 @@ export class AuthService {
       case UserRole.SUPER_ADMIN:
         return true;
       case UserRole.SOCIETY_ADMIN:
-        return [UserRole.ACCOUNTANT, UserRole.MEMBER].includes(targetRole);
+        return [UserRole.USER].includes(targetRole as UserRole);
       default:
         return false;
     }

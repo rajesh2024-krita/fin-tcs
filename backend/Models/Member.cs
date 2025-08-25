@@ -23,38 +23,38 @@ namespace MemberManagementAPI.Models
 
         public DateTime? DateOfBirth { get; set; }
 
-        [StringLength(10)]
+        [StringLength(20)]
         public string? Mobile { get; set; }
 
-        [EmailAddress]
         [StringLength(100)]
+        [EmailAddress]
         public string? Email { get; set; }
 
-        [StringLength(100)]
+        [StringLength(50)]
         public string? Designation { get; set; }
 
-        public DateTime? DOJJob { get; set; }
+        public DateTime? DojJob { get; set; }
 
-        public DateTime? DORetirement { get; set; }
+        public DateTime? DoRetirement { get; set; }
 
-        [StringLength(100)]
+        [StringLength(50)]
         public string? Branch { get; set; }
 
-        public DateTime? DOJSociety { get; set; }
+        public DateTime? DojSociety { get; set; }
 
-        [StringLength(500)]
+        [StringLength(200)]
         public string? OfficeAddress { get; set; }
 
-        [StringLength(500)]
+        [StringLength(200)]
         public string? ResidenceAddress { get; set; }
 
-        [StringLength(100)]
+        [StringLength(50)]
         public string? City { get; set; }
 
-        [StringLength(15)]
+        [StringLength(20)]
         public string? PhoneOffice { get; set; }
 
-        [StringLength(15)]
+        [StringLength(20)]
         public string? PhoneResidence { get; set; }
 
         [StringLength(100)]
@@ -63,13 +63,11 @@ namespace MemberManagementAPI.Models
         [StringLength(50)]
         public string? NomineeRelation { get; set; }
 
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal ShareAmount { get; set; }
 
-        [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal CDAmount { get; set; }
+        public decimal CdAmount { get; set; }
 
         [StringLength(100)]
         public string? BankName { get; set; }
@@ -103,7 +101,17 @@ namespace MemberManagementAPI.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal? ELoanInstalment { get; set; }
 
+        [Required]
+        public int SocietyId { get; set; }
+
+        [ForeignKey("SocietyId")]
+        public virtual Society Society { get; set; } = null!;
+
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
         public DateTime? UpdatedDate { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<Loan> Loans { get; set; } = new List<Loan>();
     }
 }

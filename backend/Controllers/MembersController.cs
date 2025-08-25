@@ -1,5 +1,7 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using MemberManagementAPI.Models;
 using MemberManagementAPI.Services;
 
@@ -7,6 +9,7 @@ namespace MemberManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class MembersController : ControllerBase
     {
         private readonly IMemberService _memberService;
@@ -18,165 +21,171 @@ namespace MemberManagementAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Get all members
-        /// </summary>
-        /// <returns>List of all members</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
         {
             try
             {
-                var members = await _memberService.GetAllMembersAsync();
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var societyId = User.FindFirst("SocietyId")?.Value;
+
+                var members = await _memberService.GetMembersAsync(currentUserId, currentUserRole, societyId != null ? int.Parse(societyId) : null);
                 return Ok(members);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching members");
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error retrieving members");
+                return StatusCode(500, new { message = "An error occurred while retrieving members" });
             }
         }
 
-        /// <summary>
-        /// Get member by ID
-        /// </summary>
-        /// <param name="id">Member ID</param>
-        /// <returns>Member details</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Member>> GetMember(int id)
         {
             try
             {
-                var member = await _memberService.GetMemberByIdAsync(id);
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var societyId = User.FindFirst("SocietyId")?.Value;
+
+                var member = await _memberService.GetMemberByIdAsync(id, currentUserId, currentUserRole, societyId != null ? int.Parse(societyId) : null);
+                
                 if (member == null)
                 {
-                    return NotFound($"Member with ID {id} not found");
+                    return NotFound();
                 }
+
                 return Ok(member);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching member with ID {Id}", id);
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error retrieving member");
+                return StatusCode(500, new { message = "An error occurred while retrieving member" });
             }
         }
 
-        /// <summary>
-        /// Get member by Member Number
-        /// </summary>
-        /// <param name="memberNo">Member Number</param>
-        /// <returns>Member details</returns>
         [HttpGet("by-number/{memberNo}")]
         public async Task<ActionResult<Member>> GetMemberByNumber(string memberNo)
         {
             try
             {
-                var member = await _memberService.GetMemberByMemberNoAsync(memberNo);
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var societyId = User.FindFirst("SocietyId")?.Value;
+
+                var member = await _memberService.GetMemberByNumberAsync(memberNo, currentUserId, currentUserRole, societyId != null ? int.Parse(societyId) : null);
+                
                 if (member == null)
                 {
-                    return NotFound($"Member with number {memberNo} not found");
+                    return NotFound();
                 }
+
                 return Ok(member);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching member with number {MemberNo}", memberNo);
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error retrieving member by number");
+                return StatusCode(500, new { message = "An error occurred while retrieving member" });
             }
         }
 
-        /// <summary>
-        /// Create a new member
-        /// </summary>
-        /// <param name="member">Member details</param>
-        /// <returns>Created member</returns>
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin,SocietyAdmin")]
         public async Task<ActionResult<Member>> CreateMember([FromBody] Member member)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
-                var createdMember = await _memberService.CreateMemberAsync(member);
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var userSocietyId = User.FindFirst("SocietyId")?.Value;
+
+                // For SocietyAdmin, ensure they can only create members for their society
+                if (currentUserRole == "SocietyAdmin" && userSocietyId != null)
+                {
+                    member.SocietyId = int.Parse(userSocietyId);
+                }
+
+                var createdMember = await _memberService.CreateMemberAsync(member, currentUserId, currentUserRole);
                 return CreatedAtAction(nameof(GetMember), new { id = createdMember.Id }, createdMember);
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(ex.Message);
+                return Conflict(new { message = ex.Message });
             }
-            catch (ArgumentException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while creating member");
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error creating member");
+                return StatusCode(500, new { message = "An error occurred while creating member" });
             }
         }
 
-        /// <summary>
-        /// Update an existing member
-        /// </summary>
-        /// <param name="id">Member ID</param>
-        /// <param name="member">Updated member details</param>
-        /// <returns>Updated member</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "SuperAdmin,SocietyAdmin")]
         public async Task<ActionResult<Member>> UpdateMember(int id, [FromBody] Member member)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
-                var updatedMember = await _memberService.UpdateMemberAsync(id, member);
-                if (updatedMember == null)
-                {
-                    return NotFound($"Member with ID {id} not found");
-                }
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var userSocietyId = User.FindFirst("SocietyId")?.Value;
+
+                member.Id = id;
+                var updatedMember = await _memberService.UpdateMemberAsync(member, currentUserId, currentUserRole, userSocietyId != null ? int.Parse(userSocietyId) : null);
                 return Ok(updatedMember);
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(ex.Message);
+                return NotFound(new { message = ex.Message });
             }
-            catch (ArgumentException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating member with ID {Id}", id);
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error updating member");
+                return StatusCode(500, new { message = "An error occurred while updating member" });
             }
         }
 
-        /// <summary>
-        /// Delete a member
-        /// </summary>
-        /// <param name="id">Member ID</param>
-        /// <returns>Success status</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdmin,SocietyAdmin")]
         public async Task<ActionResult> DeleteMember(int id)
         {
             try
             {
-                var result = await _memberService.DeleteMemberAsync(id);
-                if (!result)
-                {
-                    return NotFound($"Member with ID {id} not found");
-                }
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+                var userSocietyId = User.FindFirst("SocietyId")?.Value;
+
+                await _memberService.DeleteMemberAsync(id, currentUserId, currentUserRole, userSocietyId != null ? int.Parse(userSocietyId) : null);
                 return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting member with ID {Id}", id);
-                return StatusCode(500, "An error occurred while processing your request");
+                _logger.LogError(ex, "Error deleting member");
+                return StatusCode(500, new { message = "An error occurred while deleting member" });
             }
         }
     }
