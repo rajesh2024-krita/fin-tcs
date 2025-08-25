@@ -13,22 +13,53 @@ namespace MemberManagementAPI.Services
             _memberRepository = memberRepository;
         }
 
-        public async Task<IEnumerable<Member>> GetAllMembersAsync()
+        public async Task<IEnumerable<Member>> GetMembersAsync(int currentUserId, string? currentUserRole, int? societyId)
         {
-            return await _memberRepository.GetAllMembersAsync();
+            var allMembers = await _memberRepository.GetAllMembersAsync();
+            
+            // Filter based on user role and society
+            if (currentUserRole == "SocietyAdmin" && societyId.HasValue)
+            {
+                return allMembers.Where(m => m.SocietyId == societyId.Value);
+            }
+            
+            // SuperAdmin can see all members
+            return allMembers;
         }
 
-        public async Task<Member?> GetMemberByIdAsync(int id)
+        public async Task<Member?> GetMemberByIdAsync(int id, int currentUserId, string? currentUserRole, int? societyId)
         {
-            return await _memberRepository.GetMemberByIdAsync(id);
+            var member = await _memberRepository.GetMemberByIdAsync(id);
+            
+            if (member == null)
+                return null;
+                
+            // Check authorization
+            if (currentUserRole == "SocietyAdmin" && societyId.HasValue && member.SocietyId != societyId.Value)
+            {
+                throw new UnauthorizedAccessException("You can only access members from your society.");
+            }
+            
+            return member;
         }
 
-        public async Task<Member?> GetMemberByMemberNoAsync(string memberNo)
+        public async Task<Member?> GetMemberByNumberAsync(string memberNo, int currentUserId, string? currentUserRole, int? societyId)
         {
-            return await _memberRepository.GetMemberByMemberNoAsync(memberNo);
+            var member = await _memberRepository.GetMemberByMemberNoAsync(memberNo);
+            
+            if (member == null)
+                return null;
+                
+            // Check authorization
+            if (currentUserRole == "SocietyAdmin" && societyId.HasValue && member.SocietyId != societyId.Value)
+            {
+                throw new UnauthorizedAccessException("You can only access members from your society.");
+            }
+            
+            return member;
         }
 
-        public async Task<Member> CreateMemberAsync(Member member)
+        public async Task<Member> CreateMemberAsync(Member member, int currentUserId, string? currentUserRole)
         {
             // Validate member before creation
             if (!await ValidateMemberAsync(member))
@@ -42,18 +73,31 @@ namespace MemberManagementAPI.Services
                 throw new InvalidOperationException($"Member with MemberNo '{member.MemberNo}' already exists");
             }
 
+            // For SocietyAdmin, ensure they can only create members for their society
+            if (currentUserRole == "SocietyAdmin" && member.SocietyId == 0)
+            {
+                throw new UnauthorizedAccessException("SocietyAdmin must specify a valid SocietyId");
+            }
+
             member.CreatedDate = DateTime.UtcNow;
             member.Status ??= "Active";
 
             return await _memberRepository.CreateMemberAsync(member);
         }
 
-        public async Task<Member?> UpdateMemberAsync(int id, Member member)
+        public async Task<Member> UpdateMemberAsync(Member member, int currentUserId, string? currentUserRole, int? societyId)
         {
             // Check if member exists
-            if (!await _memberRepository.MemberExistsAsync(id))
+            var existingMember = await _memberRepository.GetMemberByIdAsync(member.Id);
+            if (existingMember == null)
             {
-                return null;
+                throw new InvalidOperationException("Member not found");
+            }
+
+            // Check authorization for SocietyAdmin
+            if (currentUserRole == "SocietyAdmin" && societyId.HasValue && existingMember.SocietyId != societyId.Value)
+            {
+                throw new UnauthorizedAccessException("You can only update members from your society.");
             }
 
             // Validate member before update
@@ -64,16 +108,34 @@ namespace MemberManagementAPI.Services
 
             // Check if MemberNo already exists for another member
             var existingMemberWithSameNo = await _memberRepository.GetMemberByMemberNoAsync(member.MemberNo);
-            if (existingMemberWithSameNo != null && existingMemberWithSameNo.Id != id)
+            if (existingMemberWithSameNo != null && existingMemberWithSameNo.Id != member.Id)
             {
                 throw new InvalidOperationException($"Another member with MemberNo '{member.MemberNo}' already exists");
             }
 
-            return await _memberRepository.UpdateMemberAsync(id, member);
+            var updatedMember = await _memberRepository.UpdateMemberAsync(member.Id, member);
+            if (updatedMember == null)
+            {
+                throw new InvalidOperationException("Failed to update member");
+            }
+
+            return updatedMember;
         }
 
-        public async Task<bool> DeleteMemberAsync(int id)
+        public async Task<bool> DeleteMemberAsync(int id, int currentUserId, string? currentUserRole, int? societyId)
         {
+            var existingMember = await _memberRepository.GetMemberByIdAsync(id);
+            if (existingMember == null)
+            {
+                throw new InvalidOperationException("Member not found");
+            }
+
+            // Check authorization for SocietyAdmin
+            if (currentUserRole == "SocietyAdmin" && societyId.HasValue && existingMember.SocietyId != societyId.Value)
+            {
+                throw new UnauthorizedAccessException("You can only delete members from your society.");
+            }
+
             return await _memberRepository.DeleteMemberAsync(id);
         }
 
@@ -105,7 +167,7 @@ namespace MemberManagementAPI.Services
                 return false;
             }
 
-            return true;
+            return await Task.FromResult(true);
         }
     }
 }

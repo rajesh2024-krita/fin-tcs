@@ -121,6 +121,10 @@ namespace MemberManagementAPI.Controllers
             {
                 return Conflict(new { message = ex.Message });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (UnauthorizedAccessException ex)
             {
                 return Forbid(ex.Message);
@@ -150,6 +154,10 @@ namespace MemberManagementAPI.Controllers
             {
                 return NotFound(new { message = ex.Message });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (UnauthorizedAccessException ex)
             {
                 return Forbid(ex.Message);
@@ -171,7 +179,13 @@ namespace MemberManagementAPI.Controllers
                 var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
                 var userSocietyId = User.FindFirst("SocietyId")?.Value;
 
-                await _memberService.DeleteMemberAsync(id, currentUserId, currentUserRole, userSocietyId != null ? int.Parse(userSocietyId) : null);
+                var result = await _memberService.DeleteMemberAsync(id, currentUserId, currentUserRole, userSocietyId != null ? int.Parse(userSocietyId) : null);
+                
+                if (!result)
+                {
+                    return NotFound(new { message = "Member not found or could not be deleted" });
+                }
+                
                 return NoContent();
             }
             catch (InvalidOperationException ex)
