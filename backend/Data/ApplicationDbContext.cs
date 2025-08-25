@@ -24,36 +24,39 @@ namespace MemberManagementAPI.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure User entity
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.Role).HasConversion<string>();
+            });
+
+            // Configure Society entity
+            modelBuilder.Entity<Society>(entity =>
+            {
+                entity.HasIndex(e => e.Code).IsUnique();
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            // Configure Member entity
+            modelBuilder.Entity<Member>(entity =>
+            {
+                entity.HasIndex(e => e.MemberNo).IsUnique();
+                entity.Property(e => e.ShareAmount).HasPrecision(18, 2);
+                entity.Property(e => e.CDAmount).HasPrecision(18, 2);
+                entity.Property(e => e.ShareDeduction).HasPrecision(18, 2);
+                entity.Property(e => e.Withdrawal).HasPrecision(18, 2);
+                entity.Property(e => e.GLoanInstalment).HasPrecision(18, 2);
+                entity.Property(e => e.ELoanInstalment).HasPrecision(18, 2);
+            });
+
             // Configure relationships
-            modelBuilder.Entity<Member>()
-                .HasIndex(m => m.MemberNo)
-                .IsUnique();
-
-            modelBuilder.Entity<Society>()
-                .HasIndex(s => s.RegistrationNo)
-                .IsUnique();
-
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
+                .HasOne(u => u.Society)
+                .WithMany(s => s.Users)
+                .HasForeignKey(u => u.SocietyId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<Loan>()
-                .HasIndex(l => l.LoanNo)
-                .IsUnique();
-
-            modelBuilder.Entity<Demand>()
-                .HasIndex(d => d.DemandNo)
-                .IsUnique();
-
-            modelBuilder.Entity<Voucher>()
-                .HasIndex(v => v.VoucherNo)
-                .IsUnique();
-
-            modelBuilder.Entity<LoanReceipt>()
-                .HasIndex(lr => lr.ReceiptNo)
-                .IsUnique();
-
-            // Configure cascade delete behavior
             modelBuilder.Entity<Member>()
                 .HasOne(m => m.Society)
                 .WithMany(s => s.Members)

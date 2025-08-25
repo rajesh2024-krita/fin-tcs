@@ -1,14 +1,13 @@
 
-using MemberManagementAPI.Models.DTOs;
+using MemberManagementAPI.Models;
+using MemberManagementAPI.Controllers;
 
 namespace MemberManagementAPI.Services
 {
     public interface IAuthService
     {
-        Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
-        Task<UserDto> CreateUserAsync(CreateUserDto createUserDto, int currentUserId);
-        Task<string> GenerateJwtTokenAsync(UserDto user);
-        Task<bool> ValidateUserRoleAsync(int userId, string requiredRole);
-        Task<UserDto?> GetUserByIdAsync(int userId);
+        Task<object?> LoginAsync(string email, string password);
+        Task<object> RegisterAsync(RegisterRequest request, int currentUserId, string currentUserRole);
+        Task<User?> GetUserByIdAsync(int userId);
     }
 }

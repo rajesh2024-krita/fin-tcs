@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add Entity Framework
+// Add Entity Framework with SQLite for now (will update to SQL Server later)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -22,16 +23,48 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISocietyService, SocietyService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
-// Simple authentication - no JWT needed
+// Add JWT Authentication
+var jwtKey = builder.Configuration["JwtSettings:Key"] ?? "your-super-secret-jwt-key-that-is-at-least-256-bits-long";
+var key = Encoding.ASCII.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// Add Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdmin", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy("SocietyAdmin", policy => policy.RequireRole("SuperAdmin", "SocietyAdmin"));
+    options.AddPolicy("User", policy => policy.RequireRole("SuperAdmin", "SocietyAdmin", "User"));
+    options.AddPolicy("Accountant", policy => policy.RequireRole("SuperAdmin", "SocietyAdmin", "Accountant"));
+    options.AddPolicy("Member", policy => policy.RequireRole("SuperAdmin", "SocietyAdmin", "User", "Accountant", "Member"));
+});
 
 // Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 

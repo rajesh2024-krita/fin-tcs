@@ -49,3 +49,55 @@ namespace MemberManagementAPI.Models
         public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
     }
 }
+using System.ComponentModel.DataAnnotations;
+
+namespace MemberManagementAPI.Models
+{
+    public class Society
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(50)]
+        public string Code { get; set; } = string.Empty;
+
+        [StringLength(500)]
+        public string? Address { get; set; }
+
+        [StringLength(100)]
+        public string? City { get; set; }
+
+        [StringLength(100)]
+        public string? State { get; set; }
+
+        [StringLength(10)]
+        public string? PinCode { get; set; }
+
+        [StringLength(15)]
+        public string? Phone { get; set; }
+
+        [StringLength(100)]
+        [EmailAddress]
+        public string? Email { get; set; }
+
+        [StringLength(50)]
+        public string? RegistrationNo { get; set; }
+
+        public DateTime? EstablishedDate { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedDate { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<User> Users { get; set; } = new List<User>();
+        public virtual ICollection<Member> Members { get; set; } = new List<Member>();
+    }
+}

@@ -1,8 +1,13 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using MemberManagementAPI.Data;
 using MemberManagementAPI.Models;
-using MemberManagementAPI.Models.DTOs;
+using MemberManagementAPI.Controllers;
 
 namespace MemberManagementAPI.Services
 {
@@ -17,108 +22,173 @@ namespace MemberManagementAPI.Services
             _configuration = configuration;
         }
 
-        public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
+        public async Task<object?> LoginAsync(string email, string password)
         {
-            try
-            {
-                var user = await _context.Users
-                    .Include(u => u.Society)
-                    .FirstOrDefaultAsync(u => u.Username.ToLower() == loginDto.Username.ToLower() && u.IsActive);
+            var user = await _context.Users
+                .Include(u => u.Society)
+                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
 
-                if (user == null || user.PasswordHash != loginDto.Password)
+            if (user == null || !VerifyPassword(password, user.PasswordHash))
+            {
+                return null;
+            }
+
+            var token = GenerateJwtToken(user);
+
+            return new
+            {
+                token,
+                user = new
                 {
-                    throw new UnauthorizedAccessException("Invalid username or password");
+                    id = user.Id,
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email,
+                    mobile = user.Mobile,
+                    role = user.Role,
+                    societyId = user.SocietyId,
+                    society = user.Society?.Name
                 }
-
-                var userDto = MapToUserDto(user);
-
-                return new AuthResponseDto
-                {
-                    Token = "simple-auth-token",
-                    User = userDto
-                };
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Login error: {ex.Message}", ex);
-            }
+            };
         }
 
-        public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto, int currentUserId)
+        public async Task<object> RegisterAsync(RegisterRequest request, int currentUserId, string currentUserRole)
         {
-            var currentUser = await GetUserByIdAsync(currentUserId);
-            if (currentUser == null)
+            // Check if email already exists
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
             {
-                throw new UnauthorizedAccessException("Current user not found");
+                throw new InvalidOperationException("Email already exists");
             }
 
-            // Role-based access control
-            if (currentUser.Role == "SocietyAdmin")
-            {
-                if (createUserDto.Role == "SuperAdmin" || createUserDto.SocietyId != currentUser.SocietyId)
-                {
-                    throw new UnauthorizedAccessException("Society admin can only create users for their society");
-                }
-            }
-            else if (currentUser.Role != "SuperAdmin")
-            {
-                throw new UnauthorizedAccessException("Insufficient permissions");
-            }
-
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == createUserDto.Username);
-            if (existingUser != null)
-            {
-                throw new InvalidOperationException("Username already exists");
-            }
+            // Role-based validation
+            ValidateRolePermission(currentUserRole, request.Role, request.SocietyId);
 
             var user = new User
             {
-                Username = createUserDto.Username,
-                PasswordHash = createUserDto.Password,
-                Role = createUserDto.Role,
-                SocietyId = createUserDto.SocietyId
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Mobile = request.Mobile,
+                PasswordHash = HashPassword(request.Password),
+                Role = request.Role,
+                SocietyId = request.SocietyId,
+                IsActive = true,
+                CreatedDate = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return await GetUserByIdAsync(user.Id) ?? throw new InvalidOperationException("Failed to create user");
-        }
-
-        public Task<string> GenerateJwtTokenAsync(UserDto user)
-        {
-            return Task.FromResult("simple-auth-token");
-        }
-
-        public async Task<bool> ValidateUserRoleAsync(int userId, string requiredRole)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && u.IsActive);
-            return user?.Role == requiredRole;
-        }
-
-        public async Task<UserDto?> GetUserByIdAsync(int userId)
-        {
-            var user = await _context.Users
-                .Include(u => u.Society)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            return user != null ? MapToUserDto(user) : null;
-        }
-
-        
-
-        private UserDto MapToUserDto(User user)
-        {
-            return new UserDto
+            return new
             {
-                Id = user.Id,
-                Username = user.Username,
-                Role = user.Role,
-                SocietyId = user.SocietyId,
-                SocietyName = user.Society?.Name,
-                IsActive = user.IsActive,
-                CreatedDate = user.CreatedDate
+                id = user.Id,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                email = user.Email,
+                mobile = user.Mobile,
+                role = user.Role,
+                societyId = user.SocietyId,
+                message = "User registered successfully"
             };
+        }
+
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+                .Include(u => u.Society)
+                .FirstOrDefaultAsync(u => u.Id == userId && u.IsActive);
+        }
+
+        private void ValidateRolePermission(string currentUserRole, string targetRole, int? societyId)
+        {
+            if (currentUserRole == "SuperAdmin")
+            {
+                // SuperAdmin can create any role
+                return;
+            }
+
+            if (currentUserRole == "SocietyAdmin")
+            {
+                // SocietyAdmin can create User, Accountant, Member roles only
+                var allowedRoles = new[] { "User", "Accountant", "Member" };
+                if (!allowedRoles.Contains(targetRole))
+                {
+                    throw new UnauthorizedAccessException("You cannot create users with this role");
+                }
+
+                if (societyId == null)
+                {
+                    throw new ArgumentException("Society ID is required");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("You do not have permission to create users");
+            }
+        }
+
+        private string GenerateJwtToken(User user)
+        {
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"] ?? "your-secret-key");
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var claims = new List<Claim>
+            {
+                new Claim("sub", user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("role", user.Role),
+                new Claim(ClaimTypes.Name, user.FullName)
+            };
+
+            if (user.SocietyId.HasValue)
+            {
+                claims.Add(new Claim("SocietyId", user.SocietyId.Value.ToString()));
+            }
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private string HashPassword(string password)
+        {
+            using var rng = RandomNumberGenerator.Create();
+            byte[] salt = new byte[16];
+            rng.GetBytes(salt);
+
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+            byte[] hash = pbkdf2.GetBytes(32);
+
+            byte[] hashBytes = new byte[48];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 32);
+
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        private bool VerifyPassword(string password, string storedHash)
+        {
+            byte[] hashBytes = Convert.FromBase64String(storedHash);
+            byte[] salt = new byte[16];
+            Array.Copy(hashBytes, 0, salt, 0, 16);
+
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+            byte[] hash = pbkdf2.GetBytes(32);
+
+            for (int i = 0; i < 32; i++)
+            {
+                if (hashBytes[i + 16] != hash[i])
+                    return false;
+            }
+            return true;
         }
     }
 }

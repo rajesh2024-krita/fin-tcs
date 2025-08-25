@@ -1,102 +1,59 @@
+
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { catchError, map } from 'rxjs/operators';
 
 export interface User {
   id: number;
-  username: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
   role: string;
   societyId?: number;
-  societyName?: string;
-  isActive: boolean;
-  createdDate: Date;
+  society?: string;
 }
 
-export enum UserRole {
-  SUPER_ADMIN = 'SuperAdmin',
-  SOCIETY_ADMIN = 'SocietyAdmin',
-  OPERATOR = 'Operator',
-  USER = 'User',
-  BRANCH_ADMIN = 'BranchAdmin',
-  ACCOUNTANT = 'Accountant',
-  MEMBER = 'Member'
-}
-
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-export interface AuthResponse {
+export interface LoginResponse {
   token: string;
   user: User;
-}
-
-export interface CreateUserRequest {
-  username: string;
-  password: string;
-  role: string;
-  societyId?: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://0.0.0.0:5000/api/auth';
+  private apiUrl = 'http://localhost:5000/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-
   public currentUser$ = this.currentUserSubject.asObservable();
-  public isLoggedIn$ = this.isLoggedInSubject.asObservable();
-
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
 
   constructor(private http: HttpClient, private router: Router) {
+    // Check if user is already logged in
     this.loadUserFromStorage();
   }
 
-  login(username: string, password: string): Observable<boolean> {
-    const loginRequest: LoginRequest = { username, password };
-
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, loginRequest, this.httpOptions)
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(
-        map(response => {
-          if (response && response.token && response.user) {
-            this.currentUserSubject.next(response.user);
-            this.isLoggedInSubject.next(true);
-
-            if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-              localStorage.setItem('currentUser', JSON.stringify(response.user));
-              localStorage.setItem('token', response.token);
-            }
-            return true;
-          }
-          return false;
+        tap(response => {
+          this.setCurrentUser(response.user, response.token);
         }),
-        catchError(error => {
-          console.error('Login error:', error);
-          return throwError(() => error);
-        })
+        catchError(this.handleError)
       );
   }
 
   logout(): void {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('token');
-    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
-    this.isLoggedInSubject.next(false);
     this.router.navigate(['/login']);
+  }
+
+  register(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData)
+      .pipe(catchError(this.handleError));
   }
 
   getCurrentUser(): User | null {
@@ -104,117 +61,97 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
+    return localStorage.getItem('token');
   }
 
-  hasPermission(module: string, action: string): boolean {
-    const user = this.getCurrentUser();
-    if (!user) return false;
-
-    // Super admin has all permissions
-    if (user.role === UserRole.SUPER_ADMIN) return true;
-
-    // Add your permission logic here based on roles
-    switch (user.role) {
-      case UserRole.SOCIETY_ADMIN:
-        return ['members', 'accounts', 'transactions', 'reports', 'master'].includes(module);
-      case UserRole.BRANCH_ADMIN:
-        return ['members', 'accounts', 'transactions', 'reports'].includes(module);
-      case UserRole.ACCOUNTANT:
-        return ['accounts', 'transactions', 'reports'].includes(module);
-      case UserRole.USER:
-        return ['members', 'accounts'].includes(module) && action === 'read';
-      case UserRole.MEMBER:
-        return module === 'members' && action === 'read';
-      default:
-        return false;
-    }
-  }
-
-  canAccessRoute(route: string): boolean {
-    const user = this.getCurrentUser();
-    if (!user) return false;
-
-    if (user.role === UserRole.SUPER_ADMIN) return true;
-
-    // Add route-specific permissions
-    const routePermissions: { [key: string]: { module: string, action: string } } = {
-      '/master/member-details': { module: 'members', action: 'read' },
-      '/transaction/deposit-receipt': { module: 'transactions', action: 'read' },
-      '/accounts/cash-book': { module: 'accounts', action: 'read' },
-      '/file/security/authority': { module: 'all', action: 'read' },
-      '/file/security/new-user': { module: 'all', action: 'create' }
-    };
-
-    const permission = routePermissions[route];
-    if (!permission) return true;
-
-    return this.hasPermission(permission.module, permission.action);
-  }
-
-  createUser(userData: CreateUserRequest): Observable<User> {
-    const headers = this.getAuthHeaders();
-    return this.http.post<User>(`${this.apiUrl}/register`, userData, { headers })
-      .pipe(
-        catchError(error => {
-          console.error('Create user error:', error);
-          return throwError(() => error);
-        })
-      );
-  }
-
-  getCurrentUserProfile(): Observable<User> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<User>(`${this.apiUrl}/me`, { headers })
-      .pipe(
-        catchError(error => {
-          console.error('Get current user error:', error);
-          return throwError(() => error);
-        })
-      );
-  }
-
-  private getAuthHeaders(): HttpHeaders {
+  isLoggedIn(): boolean {
     const token = this.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+    if (!token) return false;
+    
+    // Check if token is expired
+    try {
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = tokenData.exp * 1000;
+      return Date.now() < expirationTime;
+    } catch {
+      return false;
+    }
+  }
+
+  hasRole(roles: string[]): boolean {
+    const user = this.getCurrentUser();
+    return user ? roles.includes(user.role) : false;
+  }
+
+  isSuperAdmin(): boolean {
+    return this.hasRole(['SuperAdmin']);
+  }
+
+  isSocietyAdmin(): boolean {
+    return this.hasRole(['SuperAdmin', 'SocietyAdmin']);
+  }
+
+  canManageUsers(): boolean {
+    return this.hasRole(['SuperAdmin', 'SocietyAdmin']);
+  }
+
+  canManageMembers(): boolean {
+    return this.hasRole(['SuperAdmin', 'SocietyAdmin', 'User']);
+  }
+
+  private setCurrentUser(user: User, token: string): void {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 
   private loadUserFromStorage(): void {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      const token = localStorage.getItem('token');
-
-      if (userData && token) {
-        const user = JSON.parse(userData);
+    const token = this.getToken();
+    const userJson = localStorage.getItem('user');
+    
+    if (token && userJson && this.isLoggedIn()) {
+      try {
+        const user = JSON.parse(userJson);
         this.currentUserSubject.next(user);
-        this.isLoggedInSubject.next(true);
+      } catch {
+        this.logout();
+      }
+    } else {
+      this.logout();
+    }
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred';
+    
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      switch (error.status) {
+        case 400:
+          errorMessage = 'Bad Request - Please check your input';
+          break;
+        case 401:
+          errorMessage = 'Invalid email or password';
+          break;
+        case 403:
+          errorMessage = 'Forbidden - You do not have permission';
+          break;
+        case 404:
+          errorMessage = 'Service not found';
+          break;
+        case 409:
+          errorMessage = 'Email already exists';
+          break;
+        case 500:
+          errorMessage = 'Internal Server Error - Please try again later';
+          break;
+        default:
+          errorMessage = `Server Error: ${error.status}`;
       }
     }
-  }
-
-  getUserRoles(): string[] {
-    return Object.values(UserRole);
-  }
-
-  canCreateRole(targetRole: string): boolean {
-    const currentUser = this.getCurrentUser();
-    if (!currentUser) return false;
-
-    switch (currentUser.role) {
-      case UserRole.SUPER_ADMIN:
-        return true;
-      case UserRole.SOCIETY_ADMIN:
-        return [UserRole.USER, UserRole.ACCOUNTANT, UserRole.MEMBER].includes(targetRole as UserRole);
-      case UserRole.BRANCH_ADMIN:
-        return [UserRole.USER, UserRole.MEMBER].includes(targetRole as UserRole);
-      default:
-        return false;
-    }
+    
+    console.error('API Error:', error);
+    return throwError(() => new Error(errorMessage));
   }
 }
