@@ -1,0 +1,458 @@
+
+{
+  "info": {
+    "name": "Member Management API",
+    "description": "Complete API collection for Member Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://0.0.0.0:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"role\": \"SocietyAdmin\",\n  \"societyId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/user/1",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Get All Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/members",
+              "host": ["{{base_url}}"],
+              "path": ["members"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Member by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["members", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Member by Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/members/by-number/M001",
+              "host": ["{{base_url}}"],
+              "path": ["members", "by-number", "M001"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberNo\": \"M001\",\n  \"name\": \"John Doe\",\n  \"fatherName\": \"Robert Doe\",\n  \"address\": \"123 Main Street\",\n  \"mobile\": \"9876543210\",\n  \"email\": \"john.doe@example.com\",\n  \"aadharNo\": \"123456789012\",\n  \"panNo\": \"ABCDE1234F\",\n  \"shareAmount\": 1000.00,\n  \"cdAmount\": 500.00,\n  \"joiningDate\": \"2024-01-01T00:00:00Z\",\n  \"status\": \"Active\",\n  \"societyId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/members",
+              "host": ["{{base_url}}"],
+              "path": ["members"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Member",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"memberNo\": \"M001\",\n  \"name\": \"John Doe Updated\",\n  \"fatherName\": \"Robert Doe\",\n  \"address\": \"456 Updated Street\",\n  \"mobile\": \"9876543210\",\n  \"email\": \"john.updated@example.com\",\n  \"aadharNo\": \"123456789012\",\n  \"panNo\": \"ABCDE1234F\",\n  \"shareAmount\": 1500.00,\n  \"cdAmount\": 750.00,\n  \"joiningDate\": \"2024-01-01T00:00:00Z\",\n  \"status\": \"Active\",\n  \"societyId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["members", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/members/1",
+              "host": ["{{base_url}}"],
+              "path": ["members", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Societies",
+      "item": [
+        {
+          "name": "Get All Societies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/societies",
+              "host": ["{{base_url}}"],
+              "path": ["societies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Society by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/societies/1",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Society",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Society\",\n  \"registrationNo\": \"REG002\",\n  \"address\": \"456 Society Street\",\n  \"phone\": \"9876543210\",\n  \"email\": \"info@newsociety.com\",\n  \"establishedDate\": \"2024-01-01T00:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/societies",
+              "host": ["{{base_url}}"],
+              "path": ["societies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Society",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Society\",\n  \"registrationNo\": \"REG002\",\n  \"address\": \"789 Updated Street\",\n  \"phone\": \"9876543210\",\n  \"email\": \"info@updatedsociety.com\",\n  \"establishedDate\": \"2024-01-01T00:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/societies/1",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request Society Change",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Society Change Request\",\n  \"registrationNo\": \"REG001\",\n  \"address\": \"New Address for Change\",\n  \"phone\": \"9876543210\",\n  \"email\": \"newinfo@society.com\",\n  \"establishedDate\": \"2024-01-01T00:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/societies/1/request-change",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "1", "request-change"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Pending Change Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/societies/change-requests",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "change-requests"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Change Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isApproved\": true,\n  \"comments\": \"Approved by admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/societies/change-requests/1/approve",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "change-requests", "1", "approve"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Society",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/societies/1",
+              "host": ["{{base_url}}"],
+              "path": ["societies", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-extract JWT token from login response",
+          "if (pm.info.requestName === 'Login') {",
+          "    const responseJson = pm.response.json();",
+          "    if (responseJson.token) {",
+          "        pm.globals.set('jwt_token', responseJson.token);",
+          "        pm.environment.set('jwt_token', responseJson.token);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ]
+}
