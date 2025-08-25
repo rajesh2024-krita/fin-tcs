@@ -7,6 +7,8 @@ import { catchError, map } from 'rxjs/operators';
 export interface User {
   id: number;
   username: string;
+  firstName?: string;
+  lastName?: string;
   role: string;
   societyId?: number;
   societyName?: string;
@@ -17,7 +19,10 @@ export interface User {
 export enum UserRole {
   SUPER_ADMIN = 'SuperAdmin',
   SOCIETY_ADMIN = 'SocietyAdmin',
-  USER = 'User'
+  USER = 'User',
+  BRANCH_ADMIN = 'BranchAdmin',
+  ACCOUNTANT = 'Accountant',
+  MEMBER = 'Member'
 }
 
 export interface LoginRequest {
@@ -115,8 +120,14 @@ export class AuthService {
     switch (user.role) {
       case UserRole.SOCIETY_ADMIN:
         return ['members', 'accounts', 'transactions', 'reports', 'master'].includes(module);
+      case UserRole.BRANCH_ADMIN:
+        return ['members', 'accounts', 'transactions', 'reports'].includes(module);
+      case UserRole.ACCOUNTANT:
+        return ['accounts', 'transactions', 'reports'].includes(module);
       case UserRole.USER:
         return ['members', 'accounts'].includes(module) && action === 'read';
+      case UserRole.MEMBER:
+        return module === 'members' && action === 'read';
       default:
         return false;
     }
@@ -198,7 +209,9 @@ export class AuthService {
       case UserRole.SUPER_ADMIN:
         return true;
       case UserRole.SOCIETY_ADMIN:
-        return [UserRole.USER].includes(targetRole as UserRole);
+        return [UserRole.USER, UserRole.ACCOUNTANT, UserRole.MEMBER].includes(targetRole as UserRole);
+      case UserRole.BRANCH_ADMIN:
+        return [UserRole.USER, UserRole.MEMBER].includes(targetRole as UserRole);
       default:
         return false;
     }
