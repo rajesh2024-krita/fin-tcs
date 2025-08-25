@@ -76,9 +76,9 @@ import { AuthService } from '../../../services/auth.service';
               <div class="text-sm text-gray-600">
                 <p class="font-semibold mb-2">Demo Accounts:</p>
                 <div class="space-y-1 text-xs">
-                  <p><strong>Super Admin:</strong> superadmin@system.com / SuperAdmin123!</p>
-                  <p><strong>Society Admin:</strong> admin@abcsociety.com / Admin123!</p>
-                  <p><strong>User:</strong> john.doe@abcsociety.com / User123!</p>
+                  <p><strong>Super Admin:</strong> superadmin&#64;system.com / SuperAdmin123!</p>
+                  <p><strong>Society Admin:</strong> admin&#64;abcsociety.com / Admin123!</p>
+                  <p><strong>User:</strong> john.doe&#64;abcsociety.com / User123!</p>
                 </div>
               </div>
             </div>

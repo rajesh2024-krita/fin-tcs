@@ -5,6 +5,15 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+export enum UserRole {
+  SUPER_ADMIN = 'SuperAdmin',
+  SOCIETY_ADMIN = 'SocietyAdmin',
+  BRANCH_ADMIN = 'BranchAdmin',
+  ACCOUNTANT = 'Accountant',
+  OPERATOR = 'Operator',
+  MEMBER = 'Member'
+}
+
 export interface User {
   id: number;
   firstName: string;
