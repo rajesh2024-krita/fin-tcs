@@ -1,0 +1,79 @@
+I have a full-stack project (Angular frontend + .NET Core backend + SQL Server database). The backend is not running and is showing errors. Please do the following step by step:
+
+Fix Backend Issues
+
+Debug and fix all compilation/runtime errors in the backend (Controllers, Services, Interfaces).
+
+Ensure all interfaces (e.g., IMemberService) have proper implementations in the services.
+
+Make sure dependency injection (Program.cs / Startup.cs) is correctly configured.
+
+Verify REST API endpoints (MembersController, AuthController, etc.) are working.
+
+Authentication & Authorization
+
+Implement JWT-based authentication and role-based authorization.
+
+Roles needed: SuperAdmin, SocietyAdmin, User, Accountant, Member.
+
+SuperAdmin can create societies and society admins.
+
+SocietyAdmin can create users and members for his society.
+
+Users can create members only for their society.
+
+Protect routes with role-based access control.
+
+Database Setup
+
+Create SQL Server database named MemberManagementDB.
+
+Create tables: Users, Societies, Members, Roles.
+
+Add proper foreign keys (Users linked to Societies, Members linked to Societies).
+
+Insert sample seed data for testing (at least 2 societies, 3 users, 5 members).
+
+Write migration script or SQL schema with sample inserts.
+
+Frontend (Angular)
+
+Fix authentication flow: login, logout, role-based routing with guards.
+
+Use JWT tokens to store and validate sessions.
+
+Implement RoleGuard so only authorized roles can access specific routes.
+
+Show friendly error messages when authentication fails.
+
+Add a modern UI with Tailwind CSS or Angular Material:
+
+Responsive layout
+
+Navbar with role-based menu items
+
+Dashboard for SuperAdmin, SocietyAdmin, Users
+
+Member list with CRUD operations
+
+Visual Improvements
+
+Use clean card-based layouts with shadows and rounded corners.
+
+Improve forms (login, create society, create user, create member).
+
+Add validation (email, mobile, required fields).
+
+Provide simple but professional color scheme (blue/gray/white).
+
+Final Deliverables
+
+Fully running backend with no errors.
+
+Working authentication & role-based authorization.
+
+Database created with sample data.
+
+Angular frontend improved with a modern UI.
+
+Document steps to run the backend + frontend locally.

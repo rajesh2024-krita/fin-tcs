@@ -1,4 +1,4 @@
-run = "npm run watch"
+run = "dotnet run"
 modules = ["nodejs-20", "dotnet-7.0", "web"]
 
 [nix]
@@ -34,4 +34,4 @@ task = "shell.exec"
 args = "cd backend && dotnet restore && dotnet run --urls=\"http://0.0.0.0:5000\""
 
 [deployment]
-run = ["sh", "-c", "npm run watch"]
+run = ["sh", "-c", "dotnet run"]
