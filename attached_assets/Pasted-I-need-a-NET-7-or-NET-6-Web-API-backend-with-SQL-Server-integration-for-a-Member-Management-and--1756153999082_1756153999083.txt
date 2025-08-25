@@ -1,0 +1,116 @@
+I need a .NET 7 (or .NET 6) Web API backend with SQL Server integration for a Member Management and Financial System.
+Frontend is already completed in Angular, so API endpoints must be RESTful and integrate easily.
+Do not change UI design or disturb existing Angular functionality.
+
+User Roles & Access Control
+
+Super Admin
+
+Full CRUD access to Societies, Members, Loans, Demands, Vouchers, and Loan Receipts.
+
+Society Admin
+
+Can create Members and Users only for their Society.
+
+Can propose edits to Society details, but changes require approval.
+
+Users
+
+Can approve/reject Society changes submitted by Society Admin.
+
+Approval must be recorded with timestamps and user details.
+
+Modules & CRUD APIs
+1. Society Management
+
+CRUD endpoints.
+
+Approval Workflow:
+
+Proposed changes stored in SocietyChangeRequests table.
+
+Approval/rejection recorded in ChangeApprovalLogs.
+
+On approval, main Societies table updated.
+
+2. Member Management
+
+Full CRUD (Create, Read, Update, Delete).
+
+Members linked to a specific Society.
+
+3. Loan Management
+
+CRUD for Loan records linked to Members & Societies.
+
+4. Demand Creation
+
+CRUD for Demand records.
+
+5. Voucher Entry
+
+CRUD for Voucher records.
+
+6. Loan Receipt
+
+CRUD for Loan Receipts.
+
+Database Schema (Include Approval Workflow)
+
+Users (Id, Username, PasswordHash, Role, SocietyId FK)
+
+Societies (Id, Name, RegistrationNo, Address, City, Contact, etc.)
+
+SocietyChangeRequests (Id, SocietyId, ChangedData JSON, Status [Pending/Approved/Rejected], RequestedBy, RequestedDate)
+
+ChangeApprovalLogs (Id, ChangeRequestId, ApprovedBy, Status, Timestamp, Remarks)
+
+Members (Id, SocietyId, Name, FHName, DOB, Mobile, Email, Address)
+
+Loans (Id, MemberId, Amount, InterestRate, StartDate, EndDate, Status)
+
+Demands (Id, SocietyId, DemandType, Amount, DueDate)
+
+Vouchers (Id, SocietyId, VoucherNo, Details, Debit, Credit, Date)
+
+LoanReceipts (Id, LoanId, AmountPaid, PaymentDate, Remarks)
+
+Technical Specifications
+
+Backend Framework: ASP.NET Core Web API
+
+Database: SQL Server
+
+ORM: Entity Framework Core
+
+Authentication: JWT Token-based Role Authorization
+
+Approval Workflow:
+
+Store pending changes in separate table.
+
+Only update main table after approval.
+
+Maintain approval logs.
+
+Expected Output
+
+Complete .NET backend code:
+
+Controllers, Models, DTOs, Services
+
+EF Core DbContext and Migrations
+
+Role-based Middleware & JWT Authentication
+
+SQL Script:
+
+Table creation (including approval workflow tables)
+
+Sample data for Users, Societies, Members, Loans, Demands, Vouchers, Loan Receipts
+
+API Documentation:
+
+Endpoints list with sample request/response for each module.
+
+Generate a production-ready backend implementation with approval workflow integrated in both database and backend logic.
