@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 
 // Add Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add custom services
 builder.Services.AddScoped<IMemberService, MemberService>();
@@ -83,4 +83,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+// Initialize SQLite database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    SqliteDbInitializer.Initialize(context);
+}
+
+app.Run("http://0.0.0.0:5000");
