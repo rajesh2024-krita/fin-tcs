@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -108,7 +107,7 @@ export class AuthService {
   private loadUserFromStorage(): void {
     const token = this.getToken();
     const userJson = localStorage.getItem('user');
-    
+
     if (token && userJson) {
       try {
         const user = JSON.parse(userJson);
@@ -121,7 +120,7 @@ export class AuthService {
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred';
-    
+
     if (error.error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.error.message}`;
     } else {
@@ -148,7 +147,7 @@ export class AuthService {
           errorMessage = `Server Error: ${error.status}`;
       }
     }
-    
+
     console.error('API Error:', error);
     return throwError(() => new Error(errorMessage));
   }

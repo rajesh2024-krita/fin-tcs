@@ -1,7 +1,8 @@
+
 using Microsoft.EntityFrameworkCore;
 using MemberManagementAPI.Data;
 using MemberManagementAPI.Models;
-using MemberManagementAPI.Controllers;
+using BCrypt.Net;
 
 namespace MemberManagementAPI.Services
 {
@@ -14,6 +15,20 @@ namespace MemberManagementAPI.Services
             _context = context;
         }
 
+        public async Task<User?> ValidateUserAsync(string email, string password)
+        {
+            var user = await _context.Users
+                .Include(u => u.Society)
+                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            {
+                return user;
+            }
+
+            return null;
+        }
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users
@@ -21,48 +36,38 @@ namespace MemberManagementAPI.Services
                 .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
         }
 
-        public async Task<User?> GetUserByIdAsync(int userId)
+        public async Task<User?> CreateUserAsync(User user, string password)
         {
-            return await _context.Users
-                .Include(u => u.Society)
-                .FirstOrDefaultAsync(u => u.Id == userId && u.IsActive);
-        }
-
-        public async Task<object> CreateUserAsync(RegisterRequest request)
-        {
-            // Check if email already exists
-            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+            // Check if user already exists
+            var existingUser = await GetUserByEmailAsync(user.Email);
+            if (existingUser != null)
             {
-                throw new InvalidOperationException("Email already exists");
+                return null;
             }
 
-            var user = new User
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                Mobile = request.Mobile,
-                Role = request.Role,
-                SocietyId = request.SocietyId,
-                IsActive = true,
-                CreatedDate = DateTime.UtcNow,
-                PasswordHash = "simple-hash" // Simple placeholder
-            };
+            // Hash the password
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            user.CreatedDate = DateTime.UtcNow;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return new
+            return user;
+        }
+
+        public async Task<bool> UpdatePasswordAsync(int userId, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
             {
-                id = user.Id,
-                firstName = user.FirstName,
-                lastName = user.LastName,
-                email = user.Email,
-                mobile = user.Mobile,
-                role = user.Role,
-                societyId = user.SocietyId,
-                message = "User created successfully"
-            };
+                return false;
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            user.UpdatedDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

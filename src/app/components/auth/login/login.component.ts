@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -92,15 +91,15 @@ import { AuthService } from '../../../services/auth.service';
       border-radius: 16px;
       border: none;
     }
-    
+
     mat-card-header {
       border-bottom: 1px solid #e5e7eb;
     }
-    
+
     .mat-mdc-form-field {
       margin-bottom: 0;
     }
-    
+
     .mat-mdc-raised-button {
       border-radius: 8px;
       font-weight: 600;
@@ -120,7 +119,7 @@ export class LoginComponent implements OnInit {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 

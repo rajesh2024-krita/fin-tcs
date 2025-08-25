@@ -93,54 +93,72 @@ namespace MemberManagementAPI.Data
                 {
                     Id = 1,
                     Name = "Test Society",
+                    Code = "SOC001",
                     RegistrationNo = "REG001",
                     Address = "Test Address",
+                    City = "Test City",
+                    State = "Test State",
+                    PinCode = "123456",
                     Phone = "1234567890",
-                    EstablishedDate = DateTime.Now.AddYears(-5),
-                    CreatedDate = DateTime.Now
+                    Email = "testsociety@example.com",
+                    EstablishedDate = DateTime.UtcNow.AddYears(-5),
+                    CreatedDate = DateTime.UtcNow,
+                    IsActive = true
                 }
             );
 
-            // Create test users with plain passwords
+            // Create test users with proper properties
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
-                    Username = "superadmin",
-                    PasswordHash = "password", // Plain text password
+                    FirstName = "Super",
+                    LastName = "Admin",
+                    Email = "superadmin@example.com",
+                    Mobile = "9876543210",
+                    PasswordHash = "$2a$11$K2QkCzLg1c.LZvZ8hVq8P.KXhzQGX7HzA8K2QkCzLg1c.LZvZ8hV", // "password" hashed
                     Role = "SuperAdmin",
                     SocietyId = 1,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 },
                 new User
                 {
                     Id = 2,
-                    Username = "societyadmin",
-                    PasswordHash = "password", // Plain text password
+                    FirstName = "Society",
+                    LastName = "Admin",
+                    Email = "societyadmin@example.com",
+                    Mobile = "9876543211",
+                    PasswordHash = "$2a$11$K2QkCzLg1c.LZvZ8hVq8P.KXhzQGX7HzA8K2QkCzLg1c.LZvZ8hV", // "password" hashed
                     Role = "SocietyAdmin",
                     SocietyId = 1,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 },
                 new User
                 {
                     Id = 3,
-                    Username = "accountant1",
-                    PasswordHash = "password", // Plain text password
+                    FirstName = "Test",
+                    LastName = "Accountant",
+                    Email = "accountant@example.com",
+                    Mobile = "9876543212",
+                    PasswordHash = "$2a$11$K2QkCzLg1c.LZvZ8hVq8P.KXhzQGX7HzA8K2QkCzLg1c.LZvZ8hV", // "password" hashed
                     Role = "Accountant",
                     SocietyId = 1,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 },
                 new User
                 {
                     Id = 4,
-                    Username = "member1",
-                    PasswordHash = "password", // Plain text password
+                    FirstName = "Test",
+                    LastName = "Member",
+                    Email = "member@example.com",
+                    Mobile = "9876543213",
+                    PasswordHash = "$2a$11$K2QkCzLg1c.LZvZ8hVq8P.KXhzQGX7HzA8K2QkCzLg1c.LZvZ8hV", // "password" hashed
                     Role = "Member",
                     SocietyId = 1,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 }
             );

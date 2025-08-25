@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using MemberManagementAPI.Models;
 using MemberManagementAPI.Services;
@@ -19,38 +18,37 @@ namespace MemberManagementAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try
             {
-                var user = await _authService.GetUserByEmailAsync(request.Email);
-                
-                if (user == null)
+                var user = await _authService.ValidateUserAsync(request.Email, request.Password);
+                if (user != null)
                 {
-                    return Unauthorized(new { message = "User not found" });
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Login successful",
+                        user = new
+                        {
+                            id = user.Id,
+                            firstName = user.FirstName,
+                            lastName = user.LastName,
+                            fullName = user.FullName,
+                            email = user.Email,
+                            mobile = user.Mobile,
+                            role = user.Role,
+                            societyId = user.SocietyId,
+                            societyName = user.Society?.Name
+                        }
+                    });
                 }
 
-                // Simple login without password verification for now
-                return Ok(new
-                {
-                    token = "simple-token", // Simple token for frontend
-                    user = new
-                    {
-                        id = user.Id,
-                        firstName = user.FirstName,
-                        lastName = user.LastName,
-                        email = user.Email,
-                        mobile = user.Mobile,
-                        role = user.Role,
-                        societyId = user.SocietyId,
-                        society = user.Society?.Name
-                    }
-                });
+                return Unauthorized(new { success = false, message = "Invalid credentials" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Login error");
-                return StatusCode(500, new { message = "An error occurred during login" });
+                return StatusCode(500, new { success = false, message = "Login failed", error = ex.Message });
             }
         }
 
@@ -80,7 +78,7 @@ namespace MemberManagementAPI.Controllers
             {
                 // Return first user for simplicity
                 var user = await _authService.GetUserByIdAsync(1);
-                
+
                 if (user == null)
                 {
                     return NotFound();

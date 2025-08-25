@@ -43,3 +43,43 @@ namespace MemberManagementAPI.Models
         public DateTime? UpdatedDate { get; set; }
     }
 }
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MemberManagementAPI.Models
+{
+    public class Voucher
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string VoucherNo { get; set; } = string.Empty;
+
+        public int SocietyId { get; set; }
+
+        [ForeignKey("SocietyId")]
+        public virtual Society Society { get; set; } = null!;
+
+        [StringLength(50)]
+        public string VoucherType { get; set; } = string.Empty; // Receipt, Payment, Journal
+
+        public DateTime VoucherDate { get; set; }
+
+        [StringLength(200)]
+        public string Description { get; set; } = string.Empty;
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Amount { get; set; }
+
+        [StringLength(100)]
+        public string? Reference { get; set; }
+
+        [StringLength(500)]
+        public string? Remarks { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedDate { get; set; }
+    }
+}

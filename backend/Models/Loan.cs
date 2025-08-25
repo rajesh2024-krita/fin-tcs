@@ -56,3 +56,54 @@ namespace MemberManagementAPI.Models
         public virtual ICollection<LoanReceipt> LoanReceipts { get; set; } = new List<LoanReceipt>();
     }
 }
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MemberManagementAPI.Models
+{
+    public class Loan
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string LoanNo { get; set; } = string.Empty;
+
+        public int MemberId { get; set; }
+
+        [ForeignKey("MemberId")]
+        public virtual Member Member { get; set; } = null!;
+
+        public int SocietyId { get; set; }
+
+        [ForeignKey("SocietyId")]
+        public virtual Society Society { get; set; } = null!;
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Amount { get; set; }
+
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal InterestRate { get; set; }
+
+        public int TenureMonths { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal EMIAmount { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; } = "Active"; // Active, Closed, Defaulted
+
+        [StringLength(500)]
+        public string? Purpose { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedDate { get; set; }
+
+        public virtual ICollection<LoanReceipt> LoanReceipts { get; set; } = new List<LoanReceipt>();
+    }
+}

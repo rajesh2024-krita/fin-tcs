@@ -40,3 +40,41 @@ namespace MemberManagementAPI.Models
         public DateTime? UpdatedDate { get; set; }
     }
 }
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MemberManagementAPI.Models
+{
+    public class Demand
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public int SocietyId { get; set; }
+
+        [ForeignKey("SocietyId")]
+        public virtual Society Society { get; set; } = null!;
+
+        [StringLength(50)]
+        public string DemandType { get; set; } = string.Empty; // Monthly, Special, etc.
+
+        public DateTime DemandDate { get; set; }
+
+        [StringLength(100)]
+        public string Title { get; set; } = string.Empty;
+
+        [StringLength(500)]
+        public string? Description { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Amount { get; set; }
+
+        public DateTime DueDate { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; } = "Pending"; // Pending, Collected, Cancelled
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedDate { get; set; }
+    }
+}

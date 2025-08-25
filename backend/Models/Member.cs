@@ -114,3 +114,74 @@ namespace MemberManagementAPI.Models
         public virtual ICollection<Loan> Loans { get; set; } = new List<Loan>();
     }
 }
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MemberManagementAPI.Models
+{
+    public class Member
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string MemberNo { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(100)]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(100)]
+        public string LastName { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        public string? FatherName { get; set; }
+
+        [StringLength(500)]
+        public string? Address { get; set; }
+
+        [StringLength(15)]
+        public string? Mobile { get; set; }
+
+        [StringLength(100)]
+        [EmailAddress]
+        public string? Email { get; set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        public DateTime JoiningDate { get; set; } = DateTime.UtcNow;
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ShareAmount { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal CDAmount { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ShareDeduction { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Withdrawal { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal GLoanInstalment { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ELoanInstalment { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public int SocietyId { get; set; }
+
+        [ForeignKey("SocietyId")]
+        public virtual Society Society { get; set; } = null!;
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedDate { get; set; }
+
+        [NotMapped]
+        public string FullName => $"{FirstName} {LastName}";
+    }
+}
