@@ -1,0 +1,68 @@
+X [ERROR] TS2339: Property 'firstName' does not exist on type 'User'. [plugin angular-compiler]
+
+    src/app/components/auth/login/login.component.ts:204:46:
+      204 │ ...kBar.open(`Welcome ${user?.firstName} ${user?.lastName}!`, 'Cl...
+          ╵                               ~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'lastName' does not exist on type 'User'. [plugin angular-compiler]
+
+    src/app/components/auth/login/login.component.ts:204:65:
+      204 │ ....open(`Welcome ${user?.firstName} ${user?.lastName}!`, 'Close', {
+          ╵                                              ~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'ACCOUNTANT' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/file/security/authority/authority.component.ts:378:23:
+      378 │       { role: UserRole.ACCOUNTANT, roleName: 'Accountant' },
+          ╵                        ~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'MEMBER' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/file/security/authority/authority.component.ts:379:23:
+      379 │       { role: UserRole.MEMBER, roleName: 'Member' }
+          ╵                        ~~~~~~
+
+
+X [ERROR] TS2339: Property 'ACCOUNTANT' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/file/security/authority/authority.component.ts:396:20:
+      396 │       case UserRole.ACCOUNTANT:
+          ╵                     ~~~~~~~~~~
+
+
+X [ERROR] TS2339: Property 'MEMBER' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/file/security/authority/authority.component.ts:401:20:
+      401 │       case UserRole.MEMBER:
+          ╵                     ~~~~~~
+
+
+X [ERROR] NG9: Property 'BRANCH_ADMIN' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/user-management/user-management.component.ts:102:44:
+      102 │ ...    <option [value]="UserRole.BRANCH_ADMIN">Branch Admin</option>
+          ╵                                  ~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'BRANCH_ADMIN' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/user-management/user-management.component.ts:102:44:
+      102 │ ...    <option [value]="UserRole.BRANCH_ADMIN">Branch Admin</option>
+          ╵                                  ~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'ACCOUNTANT' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/user-management/user-management.component.ts:103:44:
+      103 │ ...        <option [value]="UserRole.ACCOUNTANT">Accountant</option>
+          ╵                                      ~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'ACCOUNTANT' does not exist on type 'typeof UserRole'. [plugin angular-compiler]
+
+    src/app/components/user-management/user-management.component.ts:103:44:
+      103 │ ...        <option [value]="UserRole.ACCOUNTANT">Accountant</option>
+          ╵                                      ~~~~~~~~~~
