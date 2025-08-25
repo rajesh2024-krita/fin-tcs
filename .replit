@@ -1,5 +1,5 @@
 run = "npm run watch"
-modules = ["nodejs-20", "web", "dotnet-7.0"]
+modules = ["nodejs-20", "dotnet-7.0", "web"]
 
 [nix]
 channel = "stable-25_05"
