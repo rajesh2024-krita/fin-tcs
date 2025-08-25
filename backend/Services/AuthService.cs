@@ -84,7 +84,7 @@ namespace MemberManagementAPI.Services
             return await GetUserByIdAsync(user.Id) ?? throw new InvalidOperationException("Failed to create user");
         }
 
-        public async Task<string> GenerateJwtTokenAsync(UserDto user)
+        public Task<string> GenerateJwtTokenAsync(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "your-secret-key-that-is-long-enough-for-security");
@@ -111,7 +111,7 @@ namespace MemberManagementAPI.Services
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return Task.FromResult(tokenHandler.WriteToken(token));
         }
 
         public async Task<bool> ValidateUserRoleAsync(int userId, string requiredRole)

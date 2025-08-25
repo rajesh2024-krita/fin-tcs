@@ -92,9 +92,8 @@ namespace MemberManagementAPI.Data
                     Name = "Test Society",
                     RegistrationNo = "REG001",
                     Address = "Test Address",
-                    ContactNumber = "1234567890",
+                    Phone = "1234567890",
                     EstablishedDate = DateTime.Now.AddYears(-5),
-                    IsActive = true,
                     CreatedDate = DateTime.Now
                 }
             );
