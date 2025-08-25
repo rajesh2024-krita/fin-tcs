@@ -1,0 +1,106 @@
+Generate an Angular project for a Financial Management System with the following requirements:
+
+1. Framework:
+   - Angular latest version
+   - Angular Material for UI
+   - Responsive design with sidebar + topbar layout
+   - Routing enabled for all menu items
+   - Lazy loading for feature modules
+   - Use services and components for modularity
+
+2. Project Structure:
+   - A sidebar menu with the following hierarchy:
+
+     File
+       - Society
+       - Security
+         - Authority
+         - My Rights
+         - New User
+         - Retrieve Password
+         - Change Password
+         - Admin Handover
+       - Create New Year
+       - Edit Opening Balance
+
+     Master
+       - Member Details
+       - Table
+       - Deposit Scheme
+       - Interest Master
+
+     Transaction
+       - Loan Taken
+       - Demand Process
+       - Account Closure
+       - Deposit Receipt
+       - Deposit Renew
+       - Deposit Slip
+       - Deposit Payment
+
+     Accounts
+       - Group
+       - Ledger
+       - Cash Book
+       - Day Book
+       - Voucher
+       - Loan Receipt
+       - GL Interest: Short/Excess
+       - EL Interest: Short/Excess
+       - Interest Paid
+       - Dividend Paid
+       - Trial Balance
+       - Balance Sheet
+       - Profit & Loss A/c
+       - Receipt & Payment
+
+     Statement
+
+     Reports
+       - Employees
+       - Voucher
+       - Opening Balance
+       - Closing Balance
+       - Certificate
+       - Ledger
+       - Labels
+       - Loan
+       - Debit Balances (WD/NWD)
+       - Debit Balance Interest (WD/NWD)
+       - Dividend Payable
+       - Voucher Print
+       - Advance Interest
+       - Excess Share
+       - Log
+
+     Open Windows
+     Backup
+     Admin
+     Exit
+     New Year
+     Test
+
+3. Functionalities (use placeholders where required):
+   - Each menu item should navigate to its own page/component with a header title.
+   - Create placeholder CRUD forms (Add, Edit, Delete, View) for:
+     - Member Details
+     - Deposit Scheme
+     - Loan Taken
+     - Voucher
+     - Ledger
+   - Use Angular Reactive Forms and Material Table for data display.
+   - Add sample mock data using Angular service.
+   - Reports section should have a Material Table with export to Excel/CSV button.
+
+4. Extra:
+   - Add authentication placeholder under Security > Login (username/password).
+   - Backup should show a placeholder button "Download Backup".
+   - Admin should have a placeholder "Manage Users".
+   - New Year should have a placeholder form with "Start New Financial Year" button.
+
+Deliverables:
+- Complete Angular project with routing
+- Sidebar + topbar layout
+- Components for each menu item
+- Placeholder pages with titles and Material UI
+- CRUD samples where mentioned

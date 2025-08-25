@@ -1,0 +1,473 @@
+
+<div class="animate-fade-in">
+  <!-- Page Header -->
+  <div class="content-header mb-6">
+    <div class="breadcrumb">
+      <span>Master</span>
+      <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+      <span class="breadcrumb-active">Member Details</span>
+    </div>
+    <h1 class="text-page-title">Member Management</h1>
+    <p class="text-body text-gray-600 dark:text-gray-400">Manage member information and settings</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="form-container">
+    <!-- Members List Card -->
+    <mat-card class="card mb-6">
+      <div class="card-header bg-gradient-to-r from-blue-600 to-purple-600">
+        <div class="card-title">
+          <mat-icon>people</mat-icon>
+          <span>Members List</span>
+        </div>
+        <button mat-raised-button class="btn btn-primary" (click)="openOffCanvas('create')">
+          <mat-icon>add</mat-icon>
+          Create Member
+        </button>
+      </div>
+
+      <div class="card-content border-l-4 border-l-blue-600">
+        <!-- Search Section -->
+        <div class="form-section">
+          <div class="form-section-content">
+            <div class="form-grid form-grid-1 p-4">
+              <div class="form-field">
+                <label class="form-label">Search Members</label>
+                <div class="input-group">
+                  <input 
+                    type="text" 
+                    class="form-input  w-full"
+                    placeholder="Search by name, member no, or mobile"
+                    [(ngModel)]="searchTerm" 
+                    (input)="onSearch()">
+                  <button type="button" class="btn btn-outline">
+                    <mat-icon>search</mat-icon>
+                    Search
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Members Table -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Member No</th>
+                <th>Full Name</th>
+                <th>Mobile</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let member of dataSource.data">
+                <td class="text-body font-medium">{{member.memberNo}}</td>
+                <td class="text-body font-medium">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span class="text-blue-600 font-medium text-sm">{{member.name?.charAt(0)}}</span>
+                    </div>
+                    <span>{{member.name}}</span>
+                  </div>
+                </td>
+                <td class="text-body">{{member.mobile || 'N/A'}}</td>
+                <td class="text-body">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium"
+                        [class]="member.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                    {{member.status}}
+                  </span>
+                </td>
+                <td class="text-body">
+                  <div class="flex gap-2">
+                    <button type="button" class="btn btn-sm btn-outline" matTooltip="View" (click)="onView(member)">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" matTooltip="Edit" (click)="onEdit(member)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" matTooltip="Delete" (click)="onDelete(member)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- No data message -->
+          <div *ngIf="dataSource.data.length === 0" class="text-center py-8">
+            <mat-icon class="text-gray-400 text-6xl mb-4">person_off</mat-icon>
+            <h3 class="text-lg font-medium text-gray-600 mb-2">No Members Found</h3>
+            <p class="text-gray-400 mb-4">Get started by creating your first member</p>
+            <button mat-raised-button color="primary" (click)="openOffCanvas('create')">
+              <mat-icon>add</mat-icon>
+              Create Member
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Off-canvas Overlay -->
+<div class="off-canvas-overlay" [class.active]="isOffCanvasOpen()" (click)="closeOffCanvas()"></div>
+
+<!-- Off-canvas Form -->
+<div class="off-canvas" [class.active]="isOffCanvasOpen()">
+  <div class="off-canvas-header">
+    <div class="card-title">
+      <mat-icon>{{isEditMode() ? 'edit' : 'person_add'}}</mat-icon>
+      <span>{{isEditMode() ? 'Edit Member' : 'Create New Member'}}</span>
+    </div>
+    <button type="button" class="btn btn-icon text-white" (click)="closeOffCanvas()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="memberForm" (ngSubmit)="onSubmit()" class="off-canvas-content">
+    <div class="form-container">
+      <mat-card class="card">
+        <div class="card-content">
+          <!-- Personal Details Section -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <!-- <mat-icon>person</mat-icon> -->
+              <span>Personal Details</span>
+            </div>
+            <div class="form-section-content">
+              <div class="form-grid form-grid-2">
+                <div class="form-field">
+                  <label class="form-label form-label-required">Member Number</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter member number"
+                    formControlName="memberNo" 
+                    required>
+                  <div class="form-error" *ngIf="memberForm.get('memberNo')?.hasError('required') && memberForm.get('memberNo')?.touched">
+                    Member number is required
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label form-label-required">Full Name</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter full name"
+                    formControlName="name" 
+                    required>
+                  <div class="form-error" *ngIf="memberForm.get('name')?.hasError('required') && memberForm.get('name')?.touched">
+                    Name is required
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label form-label-required">Father/Husband Name</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter father/husband name"
+                    formControlName="fhName" 
+                    required>
+                  <div class="form-error" *ngIf="memberForm.get('fhName')?.hasError('required') && memberForm.get('fhName')?.touched">
+                    Father/Husband name is required
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Date of Birth</label>
+                  <input 
+                    type="date" 
+                    class="form-input"
+                    formControlName="dateOfBirth">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Mobile</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter mobile number"
+                    formControlName="mobile" 
+                    maxlength="10">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Email</label>
+                  <input 
+                    type="email" 
+                    class="form-input"
+                    placeholder="Enter email address"
+                    formControlName="email">
+                  <div class="form-error" *ngIf="memberForm.get('email')?.hasError('email') && memberForm.get('email')?.touched">
+                    Please enter a valid email
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">City</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter city"
+                    formControlName="city">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" formControlName="status">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid form-grid-1 mt-4">
+                <div class="form-field">
+                  <label class="form-label">Office Address</label>
+                  <textarea 
+                    class="form-input"
+                    placeholder="Enter office address"
+                    formControlName="officeAddress" 
+                    rows="3"></textarea>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Residence Address</label>
+                  <textarea 
+                    class="form-input"
+                    placeholder="Enter residence address"
+                    formControlName="residenceAddress" 
+                    rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Details Section -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <!-- <mat-icon>work</mat-icon> -->
+              <span>Professional Details</span>
+            </div>
+            <div class="form-section-content">
+              <div class="form-grid form-grid-2">
+                <div class="form-field">
+                  <label class="form-label">Designation</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter designation"
+                    formControlName="designation">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Branch</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter branch"
+                    formControlName="branch">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Date of Joining Job</label>
+                  <input 
+                    type="date" 
+                    class="form-input"
+                    formControlName="dojJob">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Date of Retirement</label>
+                  <input 
+                    type="date" 
+                    class="form-input"
+                    formControlName="doRetirement">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Date of Joining Society</label>
+                  <input 
+                    type="date" 
+                    class="form-input"
+                    formControlName="dojSociety">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Phone Office</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter office phone"
+                    formControlName="phoneOffice">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Phone Residence</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter residence phone"
+                    formControlName="phoneResidence">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Details Section -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <!-- <mat-icon>currency_rupee</mat-icon> -->
+              <span>Financial Details</span>
+            </div>
+            <div class="form-section-content">
+              <div class="form-grid form-grid-3">
+                <div class="form-field">
+                  <label class="form-label">Share Amount</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="shareAmount" 
+                    min="0">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">CD Amount</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="cdAmount" 
+                    min="0">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Bank Name</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter bank name"
+                    formControlName="bankName">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Payable At</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter payable location"
+                    formControlName="payableAt">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Account Number</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter account number"
+                    formControlName="accountNo">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Share Deduction</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="shareDeduction" 
+                    min="0">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Withdrawal</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="withdrawal" 
+                    min="0">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">G-Loan Instalment</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="gLoanInstalment" 
+                    min="0">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">E-Loan Instalment</label>
+                  <input 
+                    type="number" 
+                    class="form-input"
+                    placeholder="0.00"
+                    formControlName="eLoanInstalment" 
+                    min="0">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nominee Details Section -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <!-- <mat-icon>family_restroom</mat-icon> -->
+              <span>Nominee Details</span>
+            </div>
+            <div class="form-section-content">
+              <div class="form-grid form-grid-2">
+                <div class="form-field">
+                  <label class="form-label">Nominee Name</label>
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Enter nominee name"
+                    formControlName="nominee">
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label">Nominee Relation</label>
+                  <select class="form-select" formControlName="nomineeRelation">
+                    <option value="">Select relation</option>
+                    <option value="Spouse">Spouse</option>
+                    <option value="Son">Son</option>
+                    <option value="Daughter">Daughter</option>
+                    <option value="Father">Father</option>
+                    <option value="Mother">Mother</option>
+                    <option value="Brother">Brother</option>
+                    <option value="Sister">Sister</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card-actions">
+          <div class="flex justify-end gap-3">
+            <button type="button" class="btn btn-secondary" (click)="closeOffCanvas()">
+              <mat-icon>close</mat-icon>
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="memberForm.invalid || isSubmitting()">
+              <mat-icon>{{isEditMode() ? 'save' : 'add'}}</mat-icon>
+              {{isEditMode() ? 'Update Member' : 'Create Member'}}
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </form>
+</div>

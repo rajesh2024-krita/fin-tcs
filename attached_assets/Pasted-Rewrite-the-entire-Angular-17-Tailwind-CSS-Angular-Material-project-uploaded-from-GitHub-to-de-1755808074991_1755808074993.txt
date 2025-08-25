@@ -1,0 +1,43 @@
+Rewrite the entire Angular 17 + Tailwind CSS + Angular Material project (uploaded from GitHub) to deliver a clean, professional UI without breaking any existing functionality, logic, routing, or data flow.
+
+### Rewrite Goals
+1. Preserve:
+   - All services, API calls, data bindings, routing, and component logic.
+   - Component names, methods, and event handlers.
+
+2. Redesign:
+   - All UI components, forms, tables, modals, sidebar, and dashboard.
+   - Layout structure (Metronic-style): Sidebar + Top Navigation + Content Area.
+   - Theme: Professional gradient palette, Dark/Light mode toggle, consistent color scheme.
+
+3. UI Rules
+   - Top-label form design: Label above each input or select field.
+   - Font: Inter or Roboto (Page title: 20px bold, Section header: 16px semi-bold, Body text: 14px).
+   - Tables: Striped rows, sticky headers, hover highlight.
+   - Cards: Rounded corners, subtle shadows, gradient headers.
+
+4. Navigation
+   - Sidebar: Collapsible, gradient background, icons aligned with text, active link highlighting.
+   - Header: Breadcrumb navigation, user profile, notification icon, Dark/Light mode toggle.
+
+5. Spacing & Alignment
+   - Padding: Minimum p-4 for sections, p-2 for form fields.
+   - Consistent margins between components (16–20px).
+   - Alignment of text, icons, and buttons must match Metronic quality.
+
+6. Theme Functionality
+   - Fully working Dark/Light mode toggle with local storage memory.
+   - Correct color contrast for text and icons in both modes.
+
+7. Global Style Guide
+   - Reusable design tokens for colors, typography, spacing.
+   - Centralized SCSS/Tailwind config for theme management.
+
+8. Testing
+   - Verify forms, tables, modals, routing, and validations are working exactly as before.
+   - No change in logic – UI only refactored.
+
+### Deliverables
+- Fully rewritten UI source code (Angular + Tailwind + Angular Material).
+- Professional, responsive, Metronic-like interface.
+- Zero loss of existing functionality.

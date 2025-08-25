@@ -1,0 +1,42 @@
+Fix and improve my uploaded Angular 17 + Tailwind CSS + Angular Material project UI. 
+
+### Issues to Fix
+1. **Alignment & Structure**
+   - Correct misaligned components (icons, titles, fields, and columns).
+   - Ensure consistent spacing between form fields, tables, and cards.
+   - Standardize layout for forms, tables, and headers (centered titles, properly aligned icons, equal column widths).
+
+2. **Sizing**
+   - Replace oversized cards and text with **normal, readable sizes**.
+   - Headings: medium size, bold; Form labels: normal size, slightly bolder; Table text: normal size.
+   - Buttons should be medium-sized with subtle gradient fills and proper hover effect.
+
+3. **Color & Contrast**
+   - Fix mismatched text and icon colors against background.
+   - Use proper contrast for both Light & Dark themes to ensure readability.
+   - Gradient headers remain attractive but subtle (no eye strain).
+
+4. **Dark/Light Theme Toggle**
+   - Fix the toggle so it switches themes dynamically across all components.
+   - Ensure background, text, icons, and table colors switch correctly.
+   - Save theme preference locally (optional but preferred).
+
+5. **Padding & Spacing**
+   - Fix inconsistent padding and margin across components.
+   - Minimum padding: `p-4` for cards, `p-2` for form fields, `p-3` for table rows.
+   - Add uniform spacing between sections (e.g., 16–20px gap).
+
+6. **Icons & Titles**
+   - Ensure icons are consistently sized and aligned with text.
+   - Use Material icons or Lucide icons (same set across app).
+   - Page titles should have subtle gradient text or underline effect, aligned left.
+
+7. **Global Polish**
+   - Maintain modular structure (SCSS or component CSS).
+   - Apply consistent typography (e.g., Inter, Roboto, or Tailwind default).
+   - Responsive design: works on desktop & tablets without overlapping.
+
+### Instructions
+- Do not remove any functionality.
+- Only adjust styles, alignment, text sizes, padding, colors, and toggle logic.
+- Keep UI clean, professional, and consistent across all pages.

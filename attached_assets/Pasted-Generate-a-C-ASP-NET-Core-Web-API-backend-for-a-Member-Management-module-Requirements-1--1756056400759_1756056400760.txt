@@ -1,0 +1,66 @@
+Generate a C# ASP.NET Core Web API backend for a Member Management module.
+
+### Requirements:
+1. **Framework**: ASP.NET Core Web API.
+2. **Database**: Use Entity Framework Core with SQL Server.
+3. **Architecture**: 
+   - Model (Entity Class)
+   - DbContext
+   - Repository Pattern
+   - Service Layer
+   - Controller with REST API endpoints
+
+### Entity: Member
+Include these properties:
+
+- MemberNo (string, required)
+- Name (string, required)
+- FHName (string, required)
+- DateOfBirth (DateTime?, optional)
+- Mobile (string?, max length 10)
+- Email (string?, email format)
+- Designation (string?)
+- DOJJob (DateTime?, optional)
+- DORetirement (DateTime?, optional)
+- Branch (string?)
+- DOJSociety (DateTime?, optional)
+- OfficeAddress (string?)
+- ResidenceAddress (string?)
+- City (string?)
+- PhoneOffice (string?)
+- PhoneResidence (string?)
+- Nominee (string?)
+- NomineeRelation (string?) // Enum or string
+- ShareAmount (decimal, required)
+- CDAmount (decimal, required)
+- BankName (string?)
+- PayableAt (string?)
+- AccountNo (string?)
+- Status (string? e.g., Active/Inactive)
+- Date (DateTime?, optional)
+- PhotoPath (string?)
+- SignaturePath (string?)
+- ShareDeduction (decimal?)
+- Withdrawal (decimal?)
+- GLoanInstalment (decimal?)
+- ELoanInstalment (decimal?)
+
+### Endpoints:
+- GET /api/members        // List all members
+- GET /api/members/{id}   // Get member by ID
+- POST /api/members       // Create a new member
+- PUT /api/members/{id}   // Update member
+- DELETE /api/members/{id} // Delete member
+
+### Additional Requirements:
+- Include DataAnnotations for validation (e.g., [Required], [EmailAddress], [MaxLength(10)]).
+- Use dependency injection for repository and service.
+- Enable Swagger for API testing.
+- Return proper HTTP status codes and error responses.
+
+Generate:
+1. Member.cs (Model with validation)
+2. ApplicationDbContext.cs
+3. IMemberRepository.cs, MemberRepository.cs
+4. IMemberService.cs, MemberService.cs
+5. MembersController.cs (with async methods)

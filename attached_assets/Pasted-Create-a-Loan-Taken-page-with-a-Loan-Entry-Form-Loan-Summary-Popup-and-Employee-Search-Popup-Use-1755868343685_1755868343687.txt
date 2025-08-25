@@ -1,0 +1,79 @@
+Create a Loan Taken page with a Loan Entry Form, Loan Summary Popup, and Employee Search Popup.
+Use the same professional UI design, gradient theme, typography, padding, and card layout as the Society and Member pages.
+Do not disturb existing UI or functionalities.
+
+---
+
+### Page Sections
+
+#### 1. Loan Entry – Main Form Fields
+- Loan Type (Dropdown)
+- Loan No. (Text Field)
+- Loan Date (Date Picker)
+- EDP No. (Text Field + Search Button → Opens Employee Search Popup)
+- Name (Auto-filled after selecting employee)
+- Loan Amount (Number Field)
+- Previous Loan (Remaining) (Auto-calculated / Display Field)
+- Net Loan (Auto-calculated: Loan Amount - Previous Loan)
+- No. of Installments (Number Field)
+- Installment Amount (Number Field)
+- Purpose (Textarea)
+- Authorized By (Dropdown – Required only if loan exceeds limit)
+- Payment Mode (Dropdown: Cash / Cheque / Bank Transfer)
+- Bank (Dropdown or Text Field)
+- Cheque No. (Text Field)
+- Cheque Date (Date Picker)
+- Share (Left Side)
+- CD (Credit Deposit) (Left Side)
+- Last Salary (Number Field)
+- Share (Right Side)
+- CD (Right Side)
+- MWF (Number Field)
+- Pay Amount (Number Field)
+- Given (Dropdown – Member No., Name)
+- Taken (Dropdown – Member No., Name)
+
+---
+
+### 2. Loan Summary Popup
+- Display table with columns:
+  - Loan No.
+  - Loan Date
+  - Amount
+  - Member
+  - EDP No.
+- Include search bar and sorting.
+- Close button and responsive modal size.
+
+---
+
+### 3. Employee Search Popup
+- Display table with columns:
+  - EDP No.
+  - Member Name
+- Search bar to filter results.
+- Click row to auto-fill Loan Entry form fields (Name, EDP No.).
+
+---
+
+### UI & Styling Guidelines
+- Use card layout for Loan Entry form.
+- Tabs or sections clearly separated.
+- Inputs: top label, field below (as used in Society page).
+- Gradient theme, button styles, and font sizes must match existing pages.
+- Popups styled consistently with modal components used in Member/Society pages.
+
+---
+
+### Functional Behavior
+- Only Frontend Implementation – No backend required (unless specified later).
+- Form should support validations (required fields, numeric checks, date format).
+- Loan Summary and Employee Search open as modals.
+- Auto-calculations (Net Loan, Previous Loan) should update dynamically.
+
+---
+
+### Deliverables
+- Full Loan Taken page with Loan Entry form, Loan Summary popup, and Employee Search popup.
+- Responsive, professional UI with proper alignment.
+- Use the same design system and component structure as Society and Member pages.

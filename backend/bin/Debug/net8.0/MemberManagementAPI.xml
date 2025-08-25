@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MemberManagementAPI</name>
+    </assembly>
+    <members>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.GetMembers">
+            <summary>
+            Get all members
+            </summary>
+            <returns>List of all members</returns>
+        </member>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.GetMember(System.Int32)">
+            <summary>
+            Get member by ID
+            </summary>
+            <param name="id">Member ID</param>
+            <returns>Member details</returns>
+        </member>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.GetMemberByNumber(System.String)">
+            <summary>
+            Get member by Member Number
+            </summary>
+            <param name="memberNo">Member Number</param>
+            <returns>Member details</returns>
+        </member>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.CreateMember(MemberManagementAPI.Models.Member)">
+            <summary>
+            Create a new member
+            </summary>
+            <param name="member">Member details</param>
+            <returns>Created member</returns>
+        </member>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.UpdateMember(System.Int32,MemberManagementAPI.Models.Member)">
+            <summary>
+            Update an existing member
+            </summary>
+            <param name="id">Member ID</param>
+            <param name="member">Updated member details</param>
+            <returns>Updated member</returns>
+        </member>
+        <member name="M:MemberManagementAPI.Controllers.MembersController.DeleteMember(System.Int32)">
+            <summary>
+            Delete a member
+            </summary>
+            <param name="id">Member ID</param>
+            <returns>Success status</returns>
+        </member>
+    </members>
+</doc>

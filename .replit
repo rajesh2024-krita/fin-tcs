@@ -1,0 +1,45 @@
+run = "npm run watch"
+modules = ["nodejs-20", "web", "dotnet-7.0"]
+
+[nix]
+channel = "stable-25_05"
+
+[[ports]]
+localPort = 4200
+externalPort = 80
+
+[workflows]
+runButton = "Start Development Server"
+
+[[workflows.workflow]]
+name = "Start Development Server"
+author = 46580335
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "ng serve --host 0.0.0.0 --port 4200"
+
+[[workflows.workflow]]
+name = "Start Backend API"
+author = 46840719
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "dotnet restore"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "dotnet run --urls=\"http://0.0.0.0:5000\""
+
+[deployment]
+run = ["sh", "-c", "npm run watch"]

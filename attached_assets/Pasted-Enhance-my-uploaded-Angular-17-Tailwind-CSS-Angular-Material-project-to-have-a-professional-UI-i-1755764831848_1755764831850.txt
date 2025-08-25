@@ -1,0 +1,43 @@
+Enhance my uploaded Angular 17 + Tailwind CSS + Angular Material project to have a professional UI inspired by Metronic.
+
+### UI Guidelines
+1. **Metronic-Style Layout**
+   - Sidebar navigation with collapsible menu sections.
+   - Top navigation bar with user profile, notifications, and theme toggle.
+   - Content area with breadcrumb navigation and page title.
+
+2. **Color & Gradient**
+   - Use a limited, professional gradient palette (blue, purple, teal, gray).
+   - Gradient should be applied subtly to headers, buttons, and highlights.
+   - Background: soft light/dark tones matching Metronic's theme.
+
+3. **Typography & Sizing**
+   - Font: "Inter" or "Roboto" (consistent across all components).
+   - Text sizes:
+     - Page Titles: 20px – bold.
+     - Section Headers: 16px – semi-bold.
+     - Body & Table Text: 14px – regular.
+   - Button size: medium with rounded corners (8px radius).
+   - Icon size: 20–24px, aligned with text.
+
+4. **Components & Alignment**
+   - All forms and tables styled like Metronic cards (slim borders, subtle shadows, rounded edges).
+   - Uniform padding (p-4 for sections, p-3 for cards, p-2 for form fields).
+   - Consistent spacing between form groups, tables, and sections (16px gap).
+
+5. **Dark/Light Mode**
+   - Fully functional toggle for Light and Dark modes.
+   - Adjust gradients, text, and icons for proper visibility in both themes.
+   - Theme switch should apply globally without misalignment or color conflicts.
+
+6. **Professional UI Features**
+   - Use Material or Lucide icons similar to Metronic.
+   - Add hover animations for buttons and menu items.
+   - Use breadcrumbs under page titles for navigation clarity.
+   - Tables: striped rows, sticky headers, subtle hover effects.
+
+### Deliverables
+- UI must replicate Metronic structure (sidebar, header, cards, typography).
+- Gradient color usage should be minimal but modern.
+- Fix all previous issues (alignment, padding, color mismatch, card sizing).
+- Keep project modular with reusable styles and theme configuration.

@@ -1,0 +1,189 @@
+
+/* Member Details Professional Styles */
+
+.member-details-container {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Professional Filter Styling */
+.filter-field .mat-mdc-form-field-wrapper {
+  border-radius: 8px !important;
+  background: var(--color-bg-primary) !important;
+  transition: all 0.2s ease !important;
+}
+
+.filter-field .mat-mdc-form-field-outline {
+  border-radius: 8px !important;
+}
+
+.filter-field:hover .mat-mdc-form-field-wrapper {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Professional Status Badges */
+.status-chip {
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+/* Professional Table Styling */
+.mat-mdc-table {
+  background: transparent !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.mat-mdc-row {
+  border-bottom: 1px solid var(--color-border-light) !important;
+  transition: all 0.2s ease !important;
+}
+
+.mat-mdc-row:hover {
+  background: var(--color-bg-secondary) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.mat-mdc-header-row {
+  background: var(--gradient-header) !important;
+  height: 56px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.mat-mdc-header-cell {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border-bottom: none !important;
+  letter-spacing: 0.025em;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.mat-mdc-cell {
+  border-bottom-color: var(--color-border-light) !important;
+  font-size: 14px !important;
+  color: var(--color-text-primary) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Professional Pagination */
+.mat-mdc-paginator {
+  background: transparent !important;
+  border: none !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+.mat-mdc-paginator .mat-mdc-button {
+  color: var(--color-text-primary) !important;
+}
+
+/* Professional Animations */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.card-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Professional Action Buttons */
+.action-button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.action-button:hover {
+  transform: scale(1.1);
+}
+
+/* Professional Responsive Design */
+@media (max-width: 768px) {
+  .member-details-container {
+    padding: 12px;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .text-page-title {
+    font-size: 18px;
+  }
+  
+  .text-section-header {
+    font-size: 15px;
+  }
+}
+
+/* Dark Theme Adjustments */
+.dark .filter-field .mat-mdc-form-field-wrapper {
+  background: var(--color-bg-primary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.dark .mat-mdc-row {
+  border-bottom: 1px solid var(--color-border-light) !important;
+}
+
+.dark .mat-mdc-row:hover {
+  background: var(--color-bg-secondary) !important;
+}
+
+.dark .mat-mdc-cell {
+  border-bottom-color: var(--color-border-light) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Professional Loading States */
+.loading-row {
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  height: 56px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Professional Form Validation */
+.mat-mdc-form-field.mat-form-field-invalid .mat-mdc-form-field-outline {
+  border-color: var(--color-danger) !important;
+}
+
+.mat-mdc-form-field.mat-form-field-invalid .mat-mdc-floating-label {
+  color: var(--color-danger) !important;
+}
+
+/* Professional Tooltips */
+.mat-mdc-tooltip {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  background: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-lg) !important;
+}

@@ -1,0 +1,45 @@
+Update my Angular 17 + Tailwind CSS + Angular Material project to enhance the **Society Form** with an approval workflow.
+
+### Requirements
+1. **Society Form Fields**
+   - name, address, city, phone, fax, email, website, registration no
+   - Interest Tab: Divident, OD, CD, Loan, Emergency Loan, LAS
+   - Limit Tab: Share, Loan, Emergency Loan
+   - Ch Bounce Charge
+   - Dropdown: Cheque return charge, Cash, Bonus
+   - Actions: Edit, View (existing functionality retained)
+
+2. **Approval Workflow**
+   - When a user edits and clicks "Save", changes are stored as **pending**.
+   - All other Society users must approve the changes before final save.
+   - Display approval status:
+     - Total users required for approval.
+     - How many users have approved.
+     - Remaining approvals pending.
+
+3. **Pending State**
+   - If not fully approved, display **"Pending Approval"** badge on Society form.
+   - Pending changes should be viewable but not overwrite original details.
+   - Only after all users approve, update becomes final.
+
+4. **UI Enhancements**
+   - Add an **Approval Status Panel** on the Society form page showing:
+     - List of users who need to approve.
+     - Approval counts (Approved / Total).
+   - Approval button for eligible users with confirmation modal.
+   - Use card-based layout for Society details and Approval Status.
+
+5. **Visual Design**
+   - Professional UI inspired by Metronic.
+   - Gradient header for Society form.
+   - Icons for "Pending", "Approved", and "Rejected" states.
+   - Subtle animations for approval updates.
+
+6. **Dark/Light Mode Support**
+   - Ensure new components adapt to theme toggle.
+
+### Deliverables
+- Society form with editable fields, view mode, and approval workflow.
+- Approval tracking UI showing pending count, approved count, and list of approvers.
+- Pending changes should not overwrite original until fully approved.
+- Consistent Metronic-style design, proper alignment, and responsive layout.

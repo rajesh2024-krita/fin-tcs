@@ -1,0 +1,13 @@
+
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+
+@Component({
+  selector: 'app-day-book',
+  standalone: true,
+  imports: [CommonModule, MatCardModule],
+  template: `<div class="page-container"><h1>Day Book</h1><mat-card><mat-card-content><p>Daily transaction recording.</p></mat-card-content></mat-card></div>`,
+  styles: [`    .page-container { max-width: 800px; margin: 0 auto; }  `]
+})
+export class DayBookComponent {}

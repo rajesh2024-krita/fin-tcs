@@ -1,0 +1,72 @@
+Create a Member Details page using the same UI design and styling already applied to the Society page. 
+Do not disturb the existing UI theme, gradient colors, typography, padding, or structure.
+
+### Requirements
+
+1. **Page Layout**
+   - Tabs:
+     - General
+     - Photo & Opening Balance
+     - Monthly Deduction
+   - Responsive design with consistent spacing, padding, and alignment matching Society page.
+
+2. **General Tab – Fields**
+   - Member No (Mem. No)
+   - Name
+   - F/H Name (Father/Husband Name)
+   - Office Address
+   - City
+   - Phone (Office)
+   - Branch
+   - Phone (Residence)
+   - Designation
+   - Mobile
+   - Residence Address
+   - Date of Birth (DOB)
+   - Date of Joining Society (DOJ Society)
+   - Email
+   - DOJ (Date of Joining Job)
+   - DOR (Date of Retirement)
+   - Nominee
+   - Nominee Relation
+
+   **Field Style**:
+   - Top label with input field below.
+   - Normal font size, professional color scheme, proper padding.
+
+3. **Photo & Opening Balance Tab**
+   - **Opening Balance Fields:**
+     - Share
+     - CD (Credit Deposit)
+   - **Bank Details Fields:**
+     - Name
+     - Payable At
+     - Account No
+     - Status
+     - Date
+   - **Upload Section:**
+     - Upload Member Photo
+     - Upload Member Signature
+   - Show preview of uploaded photo & signature.
+
+4. **Monthly Deduction Tab**
+   - Deduction Fields:
+     - Share
+     - Withdrawal
+     - G Loan Instalment
+     - E Loan Instalment
+
+5. **UI Guidelines**
+   - Match card sizes, input field styles, gradients, icons, and typography from Society page.
+   - Tabs should be clean and visually separated.
+   - Buttons (Save, Cancel) consistent with existing theme.
+
+6. **Functionality**
+   - Only Frontend – No backend integration required.
+   - Form validation (basic: required fields, email format, date picker).
+   - Photo & Signature file upload should preview image on the same card.
+
+7. **Deliverables**
+   - React / Angular component for Member Details page.
+   - Uses same CSS / Tailwind classes / SCSS as Society page.
+   - Clean, professional, fully aligned layout with gradient theme.

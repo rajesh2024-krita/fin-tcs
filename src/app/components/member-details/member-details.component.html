@@ -1,0 +1,240 @@
+
+<div class="space-y-6 animate-fade-in">
+  <!-- Professional Page Header -->
+  <div class="card-professional overflow-hidden">
+    <div class="gradient-header p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <!-- Breadcrumb -->
+          <nav class="breadcrumb-professional text-white/80 mb-2">
+            <span>Dashboard</span>
+            <mat-icon class="separator text-sm">chevron_right</mat-icon>
+            <span>Master</span>
+            <mat-icon class="separator text-sm">chevron_right</mat-icon>
+            <span class="active text-white font-medium">Member Details</span>
+          </nav>
+          
+          <div class="flex items-center space-x-3">
+            <div class="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+              <mat-icon class="text-2xl">people</mat-icon>
+            </div>
+            <div>
+              <h1 class="text-page-title font-bold">Member Management</h1>
+              <p class="text-body text-white/90">Manage member information and accounts</p>
+            </div>
+          </div>
+        </div>
+        
+        <button mat-raised-button class="btn-primary bg-white/20 backdrop-blur-sm text-white border-white/30 hover:bg-white/30">
+          <mat-icon class="mr-2">add</mat-icon>
+          Add New Member
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Professional Filters Card -->
+  <div class="card-professional">
+    <div class="p-6">
+      <div class="flex items-center mb-4">
+        <div class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 mr-3">
+          <mat-icon class="text-blue-600 dark:text-blue-400 text-lg">filter_list</mat-icon>
+        </div>
+        <h2 class="text-section-header font-semibold text-gray-800 dark:text-white">Search & Filter</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Search Members</mat-label>
+          <input matInput placeholder="Search by name, ID, or phone">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select>
+            <mat-option value="all">All Status</mat-option>
+            <mat-option value="active">Active</mat-option>
+            <mat-option value="inactive">Inactive</mat-option>
+            <mat-option value="suspended">Suspended</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Member Type</mat-label>
+          <mat-select>
+            <mat-option value="all">All Types</mat-option>
+            <mat-option value="regular">Regular</mat-option>
+            <mat-option value="premium">Premium</mat-option>
+            <mat-option value="corporate">Corporate</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      
+      <div class="flex justify-end space-x-2">
+        <button mat-button class="btn-secondary">
+          <mat-icon class="mr-2">clear</mat-icon>
+          Clear Filters
+        </button>
+        <button mat-raised-button class="btn-primary">
+          <mat-icon class="mr-2">search</mat-icon>
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Professional Members Table -->
+  <div class="card-professional overflow-hidden">
+    <!-- Table Header -->
+    <div class="gradient-header p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <mat-icon class="text-white text-xl">table_chart</mat-icon>
+          <h3 class="text-section-header font-semibold text-white">Member Directory</h3>
+          <span class="status-badge info">1,234 Members</span>
+        </div>
+        <div class="flex space-x-2">
+          <button mat-button class="text-white hover:bg-white/20 transition-all duration-200 text-caption font-medium">
+            <mat-icon class="mr-1 text-lg">download</mat-icon>
+            Export
+          </button>
+          <button mat-button class="text-white hover:bg-white/20 transition-all duration-200 text-caption font-medium">
+            <mat-icon class="mr-1 text-lg">print</mat-icon>
+            Print
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Content -->
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" class="w-full">
+        
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Member ID</th>
+          <td mat-cell *matCellDef="let element" class="text-body">{{element.id}}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Full Name</th>
+          <td mat-cell *matCellDef="let element" class="text-body font-medium">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                <span class="text-white text-xs font-bold">{{element.name.charAt(0)}}</span>
+              </div>
+              <span>{{element.name}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Phone Column -->
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Phone</th>
+          <td mat-cell *matCellDef="let element" class="text-body">{{element.phone}}</td>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Email</th>
+          <td mat-cell *matCellDef="let element" class="text-body">{{element.email}}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Status</th>
+          <td mat-cell *matCellDef="let element" class="text-body">
+            <span [class]="getStatusClass(element.status)" class="status-badge">
+              <mat-icon class="text-xs mr-1">{{getStatusIcon(element.status)}}</mat-icon>
+              {{element.status}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Balance Column -->
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Balance</th>
+          <td mat-cell *matCellDef="let element" class="text-body font-semibold">
+            <span [class]="element.balance >= 0 ? 'text-green-600' : 'text-red-600'">
+              ₹{{element.balance | number:'1.2-2'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="font-semibold">Actions</th>
+          <td mat-cell *matCellDef="let element" class="text-body">
+            <div class="flex space-x-1">
+              <button mat-icon-button 
+                      class="w-8 h-8 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
+                      matTooltip="View Details">
+                <mat-icon class="text-base">visibility</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      class="w-8 h-8 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200"
+                      matTooltip="Edit Member">
+                <mat-icon class="text-base">edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      class="w-8 h-8 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                      matTooltip="Delete Member">
+                <mat-icon class="text-base">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+            class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"></tr>
+      </table>
+    </div>
+
+    <!-- Professional Pagination -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+      <mat-paginator 
+        [pageSizeOptions]="[10, 25, 50, 100]" 
+        showFirstLastButtons
+        class="bg-transparent">
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Professional Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="card-professional p-4 text-center">
+      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600">
+        <mat-icon class="text-white text-xl">people</mat-icon>
+      </div>
+      <h3 class="text-section-header font-bold text-gray-800 dark:text-white">1,234</h3>
+      <p class="text-caption text-gray-500 dark:text-gray-400">Total Members</p>
+    </div>
+    
+    <div class="card-professional p-4 text-center">
+      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-green-500 to-teal-600">
+        <mat-icon class="text-white text-xl">check_circle</mat-icon>
+      </div>
+      <h3 class="text-section-header font-bold text-gray-800 dark:text-white">1,180</h3>
+      <p class="text-caption text-gray-500 dark:text-gray-400">Active Members</p>
+    </div>
+    
+    <div class="card-professional p-4 text-center">
+      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600">
+        <mat-icon class="text-white text-xl">account_balance</mat-icon>
+      </div>
+      <h3 class="text-section-header font-bold text-gray-800 dark:text-white">₹45.2M</h3>
+      <p class="text-caption text-gray-500 dark:text-gray-400">Total Deposits</p>
+    </div>
+    
+    <div class="card-professional p-4 text-center">
+      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-red-500 to-pink-600">
+        <mat-icon class="text-white text-xl">trending_up</mat-icon>
+      </div>
+      <h3 class="text-section-header font-bold text-gray-800 dark:text-white">₹2.1M</h3>
+      <p class="text-caption text-gray-500 dark:text-gray-400">Interest Earned</p>
+    </div>
+  </div>
+</div>
