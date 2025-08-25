@@ -1,0 +1,10 @@
+λ dotnet run
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Program.cs(17,13): er ror CS1061: 'DbContextOptionsBuilder' does not contain a definition for 'UseSqlite ' and no accessible extension method 'UseSqlite' accepting a first argument of typ e 'DbContextOptionsBuilder' could be found (are you missing a using directive or a n assembly reference?) [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backe nd\MemberManagementAPI.csproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(103,25): error CS0117: 'Member' does not contain a definition for 'FatherNa me' [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagement API.csproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(104,25): error CS0117: 'Member' does not contain a definition for 'Address'  [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagementAPI .csproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(107,25): error CS0117: 'Member' does not contain a definition for 'AadharNo ' [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagementAP I.csproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(108,25): error CS0117: 'Member' does not contain a definition for 'PanNo' [ C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagementAPI.c sproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(110,25): error CS0117: 'Member' does not contain a definition for 'CdAmount ' [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagementAP I.csproj]
+C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\Data\SqliteDbInitiali zer.cs(111,25): error CS0117: 'Member' does not contain a definition for 'JoiningD ate' [C:\Rajesh\Angular\ZestySmartProcedures\fintcs\fintcs\backend\MemberManagemen tAPI.csproj]
+
+The build failed. Fix the build errors and run again.
