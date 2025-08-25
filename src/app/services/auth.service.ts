@@ -47,7 +47,7 @@ export interface CreateUserRequest {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api/auth';
+  private apiUrl = 'http://0.0.0.0:5000/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
 
