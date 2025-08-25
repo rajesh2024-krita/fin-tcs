@@ -30,7 +30,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {
-    // Check if user is already logged in
     this.loadUserFromStorage();
   }
 
@@ -66,16 +65,8 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     const token = this.getToken();
-    if (!token) return false;
-    
-    // Check if token is expired
-    try {
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = tokenData.exp * 1000;
-      return Date.now() < expirationTime;
-    } catch {
-      return false;
-    }
+    const user = this.getCurrentUser();
+    return !!(token && user); // Simple check - just verify token and user exist
   }
 
   hasRole(roles: string[]): boolean {
@@ -109,15 +100,13 @@ export class AuthService {
     const token = this.getToken();
     const userJson = localStorage.getItem('user');
     
-    if (token && userJson && this.isLoggedIn()) {
+    if (token && userJson) {
       try {
         const user = JSON.parse(userJson);
         this.currentUserSubject.next(user);
       } catch {
         this.logout();
       }
-    } else {
-      this.logout();
     }
   }
 

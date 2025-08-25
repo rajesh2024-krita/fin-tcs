@@ -6,8 +6,8 @@ namespace MemberManagementAPI.Services
 {
     public interface IAuthService
     {
-        Task<object?> LoginAsync(string email, string password);
-        Task<object> RegisterAsync(RegisterRequest request, int currentUserId, string currentUserRole);
+        Task<User?> GetUserByEmailAsync(string email);
         Task<User?> GetUserByIdAsync(int userId);
+        Task<object> CreateUserAsync(RegisterRequest request);
     }
 }
